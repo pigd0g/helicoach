@@ -118,6 +118,8 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     } else if (view === "maneuvers") {
       setView("levels");
       setSelectedLevel(null);
+    } else if (view === "about") {
+      setView("levels");
     }
   };
 
@@ -166,51 +168,95 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
               </svg>
             </button>
           )}
-          <h1 className="text-lg font-bold tracking-wide">
-            Pilot Proficiency Program
-          </h1>
+          <h1 className="text-lg font-bold tracking-wide">HeliCoach</h1>
+          {view !== "about" && (
+            <button
+              className="absolute right-4 p-2 -mr-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20"
+              onClick={() => {
+                setView("about");
+                window.scrollTo(0, 0);
+              }}
+              aria-label="About"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+            </button>
+          )}
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto p-4 pb-20">
-        {view === "levels" && (
-          <div className="space-y-6">
-            <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg">
-              <h2 className="text-xl font-bold mb-2">Ready to train?</h2>
-              <p className="text-blue-100 mb-4 text-sm">
-                Pick a random incomplete maneuver to practice now.
-              </p>
-              <button
-                onClick={handleRandomManeuver}
-                className="bg-white text-blue-700 font-bold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-50 active:bg-blue-100 transition-colors w-full sm:w-auto flex items-center justify-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                  <path d="M3 3v5h5" />
-                  <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
-                  <path d="M16 16h5v5" />
-                </svg>
-                Random Maneuver
-              </button>
+        {view === "about" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">About</h2>
+              <div className="space-y-4 text-slate-700 leading-relaxed">
+                <p>
+                  <strong>HeliCoach</strong> provides a structured training
+                  guide based on the RC Heli Nation Pilot Proficiency Program,
+                  designed to help RC helicopter pilots of all skill levels
+                  improve their flying.
+                </p>
+                <p>
+                  Starting from basic hovering orientations in Level 1, the
+                  program progresses through forward flight, aerobatics, and
+                  advanced 3D maneuvers.
+                </p>
+                <p>
+                  Use this app to track your progress, and master each level at
+                  your own pace.
+                </p>
+                <p>
+                  All data is stored locally in your browser's local storage.
+                </p>
+              </div>
             </div>
 
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-3">
+                How to use
+              </h3>
+              <ul className="list-disc list-inside space-y-2 text-slate-700">
+                <li>Select a Level to view its maneuvers.</li>
+                <li>Tap a maneuver to see details and variations.</li>
+                <li>Mark maneuvers as complete to track your progress.</li>
+                <li>
+                  Use the <strong>AI Coach Assistant</strong> prompt in your
+                  favourite AI assistant to generate a custom training plan
+                  based on your progress.
+                </li>
+              </ul>
+            </div>
+
+            <div className="text-center text-slate-400 text-sm pt-4">
+              <p>Happy Flying!</p>
+              <p className="mt-1">HeliCoach</p>
+            </div>
+          </div>
+        )}
+
+        {view === "levels" && (
+          <div className="space-y-6">
             <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg">
               <h2 className="text-lg font-bold text-blue-100 mb-2">
                 AI Coach Assistant
               </h2>
               <p className="text-blue-100 text-sm mb-4">
                 Generate a prompt with your progress to get personalized
-                coaching from an AI.
+                coaching from your favourite AI assistant.
               </p>
               <button
                 onClick={handleCopyPrompt}
