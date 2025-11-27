@@ -249,6 +249,7 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
                 <li>
                   Source available on{" "}
                   <a
+                    className="link underline"
                     href="https://github.com/pigd0g/helicoach"
                     target="_blank"
                     rel="noopener noreferrer"
