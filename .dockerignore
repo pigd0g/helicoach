@@ -1,0 +1,9 @@
+node_modules
+dist
+.git
+.cache
+/*.tgz
+.DS_Store
+npm-debug.log
+.env
+/.vite
