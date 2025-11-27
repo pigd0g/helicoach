@@ -241,6 +241,24 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
               </ul>
             </div>
 
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-3">
+                PR's Welcome
+              </h3>
+              <ul className="list-disc list-inside space-y-2 text-slate-700">
+                <li>
+                  Source available on{" "}
+                  <a
+                    href="https://github.com/pigd0g/helicoach"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub
+                  </a>{" "}
+                </li>
+              </ul>
+            </div>
+
             <div className="text-center text-slate-400 text-sm pt-4">
               <p>Happy Flying!</p>
               <p className="mt-1">HeliCoach</p>

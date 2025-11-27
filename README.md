@@ -1,50 +1,107 @@
-# React + Vite
+# RCHN Pilot Proficiency — Helicopter Coach
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Pilot Proficiency is a small mobile-first React app that helps RC helicopter pilots track progress through a structured set of maneuvers, get random practice suggestions, and generate a copyable prompt for an AI coach.
 
-Currently, two official plugins are available:
+This repository contains a Vite + React frontend and includes Docker assets to build a static production image served by nginx.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- Browse training Levels and Maneuvers
+- Track completed maneuvers (persisted in `localStorage`)
+- Random maneuver selector for quick practice
+- Per-level "Mark All Completed" action
+- AI Coach prompt generator (copies a tailored text to clipboard)
+- Lightweight, mobile-first UI using Tailwind CSS
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech stack
 
-## Expanding the ESLint configuration
+- React (Vite)
+- Tailwind CSS
+- LocalStorage for persistence
+- Nginx (production static server in Docker image)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting started (development)
 
+Requirements:
+- Node 18+ and npm
+- (Optional) Docker for containerized runs
 
-        {levels.map((level) => (
-          <div key={level.id}>
-            {level.maneuvers.map((maneuver) => (
-              <div key={`${level.id}-${maneuver.id}`}>
-                {maneuver.id} - {maneuver.title}
-              </div>
-            ))}
-          </div>
-        ))}
-  ## Docker / Deployment
+Install dependencies:
 
-  Build the static site and serve it with nginx using Docker (multi-stage image):
+```powershell
+npm ci
+```
 
-  Build the image locally:
+Run the dev server:
 
-  ```powershell
-  docker build -t rchn-app:latest .
-  ```
+```powershell
+npm run dev
+```
 
-  Run with Docker:
+Open http://localhost:5173 (or the host/port shown by Vite) in your browser.
 
-  ```powershell
-  docker run --rm -p 8080:80 rchn-app:latest
-  ```
+## Build (production)
 
-  Or use Docker Compose:
+Create an optimized static build:
 
-  ```powershell
-  docker compose up --build
-  ```
+```powershell
+npm run build
+```
 
-  This repository includes a `Dockerfile` (multi-stage build), `nginx/default.conf` (SPA fallback), and `docker-compose.yml` for convenience.
+Preview the static build locally with Vite:
+
+```powershell
+npm run preview
+```
+
+The build output will be in `dist/`.
+
+## Docker (production)
+
+This repo includes a multi-stage `Dockerfile` that builds the app with Node and serves it with nginx.
+
+Build the image locally:
+
+```powershell
+docker build -t rchn-app:latest .
+```
+
+Run the container:
+
+```powershell
+docker run --rm -p 8080:80 rchn-app:latest
+```
+
+Or use Docker Compose (bundled `docker-compose.yml`):
+
+```powershell
+docker compose up --build
+```
+
+The app will be available at `http://localhost:8080`.
+
+## Project structure (important files)
+
+- `src/` — React source files (`App.jsx`, `data.js`, etc.)
+- `index.html` — App entry
+- `package.json` — scripts and dependencies
+- `Dockerfile` — multi-stage Docker build
+- `nginx/default.conf` — nginx config (SPA fallback & caching)
+- `docker-compose.yml` — convenience compose file
+
+## Contributing
+
+Contributions are welcome. For small improvements or bug fixes:
+
+1. Fork the repo
+2. Create a branch
+3. Open a PR with a clear description of changes
+
+## Notes
+
+- The app stores completed maneuvers in the browser's `localStorage` under the key `completedManeuvers`.
+- If you change the build script name in `package.json`, update the `Dockerfile` accordingly.
+
+---
+
+If you'd like, I can add a GitHub Actions workflow to build and push the Docker image automatically.
