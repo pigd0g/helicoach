@@ -151,7 +151,15 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
       try {
         const data = JSON.parse(e.target?.result);
         if (data.completedManeuvers && typeof data.completedManeuvers === "object") {
-          setCompletedManeuver(data.completedManeuvers);
+          // Validate and sanitize: only keep entries with valid maneuver ID format and boolean values
+          const validManeuverIds = new Set(levels.flatMap((l) => l.maneuvers.map((m) => m.id)));
+          const sanitized = {};
+          for (const [key, value] of Object.entries(data.completedManeuvers)) {
+            if (validManeuverIds.has(key) && value === true) {
+              sanitized[key] = true;
+            }
+          }
+          setCompletedManeuver(sanitized);
           alert("Progress imported successfully!");
         } else {
           alert("Invalid file format. Please select a valid HeliCoach export file.");
