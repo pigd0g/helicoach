@@ -235,6 +235,7 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
               </svg>
             </button>
           )}
+          <img src="/logow.png" alt="HeliCoach Logo" className="h-8 w-8 mr-2" />
           <h1 className="text-lg font-bold tracking-wide">HeliCoach</h1>
           {view !== "about" && (
             <button
