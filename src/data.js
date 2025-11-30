@@ -2,6 +2,7 @@ export const levels = [
   {
     id: 1,
     title: "Level 1: Beginner",
+    video: "https://youtu.be/6KTPnrpf4hs",
     maneuvers: [
       {
         id: "1.1",
@@ -64,6 +65,7 @@ export const levels = [
   {
     id: 2,
     title: "Level 2: Basic Sport",
+    video: "https://youtu.be/Cm7p8Z7tuao",
     maneuvers: [
       {
         id: "2.1",
@@ -120,6 +122,7 @@ export const levels = [
   {
     id: 3,
     title: "Level 3: Intermediate Sport",
+    video: "https://youtu.be/lJ5aG-H5JWQ",
     maneuvers: [
       {
         id: "3.1",
@@ -215,6 +218,7 @@ export const levels = [
   {
     id: 4,
     title: "Level 4: Advanced Sport",
+    video: "https://youtu.be/Fr7FyjfXeg0",
     maneuvers: [
       {
         id: "4.1",
@@ -293,6 +297,7 @@ export const levels = [
   {
     id: 5,
     title: "Level 5: Basic 3D",
+    video: "https://youtu.be/7xHw3uRXuzw",
     maneuvers: [
       {
         id: "5.1",
@@ -389,6 +394,7 @@ export const levels = [
   {
     id: 6,
     title: "Level 6: Intermediate 3D",
+    video: "https://youtu.be/rwHxtfx8DzM",
     maneuvers: [
       {
         id: "6.1",
@@ -459,6 +465,7 @@ export const levels = [
   {
     id: 7,
     title: "Level 7: Advanced 3D",
+    video: "https://youtu.be/7HeJoPii1dQ",
     maneuvers: [
       {
         id: "7.1",

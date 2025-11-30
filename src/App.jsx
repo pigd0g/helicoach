@@ -4,6 +4,7 @@ import { levels, tips } from "./data";
 function App() {
   const [view, setView] = useState("levels");
   const [selectedLevel, setSelectedLevel] = useState(null);
+  const [showVideo, setShowVideo] = useState(false);
   const [selectedManeuver, setSelectedManeuver] = useState(null);
   const [currentTipIndex, setCurrentTipIndex] = useState(() =>
     Math.floor(Math.random() * tips.length)
@@ -49,6 +50,7 @@ function App() {
 
   const handleLevelClick = (level) => {
     setSelectedLevel(level);
+    setShowVideo(false);
     setView("maneuvers");
     window.scrollTo(0, 0);
   };
@@ -78,6 +80,7 @@ function App() {
       );
 
       setSelectedLevel(level);
+      setShowVideo(false);
       setSelectedManeuver(randomManeuver);
       setView("detail");
       window.scrollTo(0, 0);
@@ -88,9 +91,14 @@ function App() {
 
   const handleCopyPrompt = () => {
     const allManeuvers = levels.flatMap((l) =>
-      l.maneuvers.map((m) => `Level ${l.id}: ${m.title}`)
+      l.maneuvers.map(
+        (m) =>
+          `Level ${l.id}: ${m.title}${
+            m.variations === "N/A" ? "" : " - " + m.variations
+          }`
+      )
     );
-    const progress = JSON.stringify(completedManeuvers);
+    const progress = Object.keys(completedManeuvers).join(", ");
     const allTips = tips.join("\n");
 
     const prompt = `You are a helpful RC Helicopter Pilot Proficiency Coach.
@@ -98,7 +106,7 @@ function App() {
 Here are the maneuvers in the program:
 ${allManeuvers.join("\n")}
 
-Here is my current progress (JSON format of completed maneuver IDs):
+Here is my current progress (list of completed maneuver IDs):
 ${progress}
 
 Here are some helpful tips for pilots:
@@ -135,7 +143,9 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `helicoach-progress-${new Date().toISOString().split("T")[0]}.json`;
+    a.download = `helicoach-progress-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -150,9 +160,14 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target?.result);
-        if (data.completedManeuvers && typeof data.completedManeuvers === "object") {
+        if (
+          data.completedManeuvers &&
+          typeof data.completedManeuvers === "object"
+        ) {
           // Validate and sanitize: only keep entries with valid maneuver ID format and boolean values
-          const validManeuverIds = new Set(levels.flatMap((l) => l.maneuvers.map((m) => m.id)));
+          const validManeuverIds = new Set(
+            levels.flatMap((l) => l.maneuvers.map((m) => m.id))
+          );
           const sanitized = {};
           for (const [key, value] of Object.entries(data.completedManeuvers)) {
             if (validManeuverIds.has(key) && value === true) {
@@ -162,7 +177,9 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
           setCompletedManeuver(sanitized);
           alert("Progress imported successfully!");
         } else {
-          alert("Invalid file format. Please select a valid HeliCoach export file.");
+          alert(
+            "Invalid file format. Please select a valid HeliCoach export file."
+          );
         }
       } catch {
         alert("Error reading file. Please select a valid JSON file.");
@@ -575,6 +592,50 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
                 </span>
               </div>
             </div>
+
+            {selectedLevel.video && (
+              <div className="space-y-4">
+                <button
+                  onClick={() => setShowVideo(!showVideo)}
+                  className="w-full py-3 px-4 bg-white border border-slate-200 rounded-xl text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-red-600"
+                  >
+                    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+                    <path d="m10 15 5-3-5-3z" />
+                  </svg>
+                  {showVideo
+                    ? "Hide Video Guide"
+                    : "RC Helicopter Richard's Video Guide"}
+                </button>
+                {showVideo && (
+                  <div className="rounded-xl overflow-hidden shadow-md animate-in fade-in slide-in-from-top-4 duration-300">
+                    <iframe
+                      width="100%"
+                      height="300"
+                      src={`https://www.youtube.com/embed/${selectedLevel.video
+                        .split("/")
+                        .pop()}`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="space-y-3">
               {selectedLevel.maneuvers.map((maneuver) => {
