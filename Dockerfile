@@ -3,6 +3,9 @@ FROM node:lts-alpine AS build
 
 WORKDIR /app
 
+ARG VITE_GA_ID
+ENV VITE_GA_ID=$VITE_GA_ID
+
 # Install dependencies (use package-lock if present)
 COPY package*.json ./
 RUN npm ci --silent
