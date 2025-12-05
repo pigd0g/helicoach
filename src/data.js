@@ -10,6 +10,7 @@ export const levels = [
         description:
           "Take off straight up from the landing area with a constant rate of climb and minimal lateral movement. Come to a complete stop at a height of approximately 3 feet (1 meter) without any vertical movement and minimal lateral movement.",
         variations: "N/A",
+        url: "https://youtu.be/6KTPnrpf4hs?t=15s",
       },
       {
         id: "1.2",
@@ -17,6 +18,7 @@ export const levels = [
         description:
           "Hold a stationary hover with no vertical or lateral movement and hold for 1 minute.",
         variations: "N/A",
+        url: "https://youtu.be/6KTPnrpf4hs?t=31s",
       },
       {
         id: "1.3",
@@ -24,6 +26,7 @@ export const levels = [
         description:
           "From landing area take-off, hover for 10 seconds, move forward 10 feet (3 meters) and hover for 10 seconds, then move backward 20 feet (6 meters) and hover for 10 seconds. Next, move forward 10 feet (3 meters) until you are over the landing area and hover for 10 seconds, then move 10 feet (3 meters) to the left and hover for 10 seconds, move 20 feet (6 meters) to the right and hover for 10 seconds, and finally move 10 feet (3 meters) to the left until you are over the landing area and hover for 10 seconds, then land with the skids completely within the landing area. If you have done this correctly, the model should trace out a cross shape with the landing area at the center.",
         variations: "N/A",
+        url: "https://youtu.be/6KTPnrpf4hs?t=104s",
       },
       {
         id: "1.4",
@@ -31,6 +34,7 @@ export const levels = [
         description:
           "Take off and hover at 3 feet (1 meter) for 5 seconds, then climb straigh up 6 feet (2 meters) and hover for 5 seconds. Next, descend 6 feet (2 meters) back to the original hover height and hover for 5 seconds and finally land the model with the skids completely within the landing area.",
         variations: "N/A",
+        url: "https://youtu.be/6KTPnrpf4hs?t=190s",
       },
       {
         id: "1.5",
@@ -38,6 +42,7 @@ export const levels = [
         description:
           "Take off to a stationary hover at 3 feet (1 meter) for 5 seconds, rotate the nose of the model 45 degrees to the left and hover for 5 seconds, then rotate the nose of the model 45 degrees to the right and back to the original tail-in orientation and hover for 5 seconds. Next rotate the nose of the model 45 degrees to the right and hover for 5 seconds, and finally rotate the nose of the model 45 degrees left and back to the original tail-in orientation, hover for 5 seconds, and land with skids completely in the landing area.",
         variations: "N/A",
+        url: "https://youtu.be/6KTPnrpf4hs?t=230s",
       },
       {
         id: "1.6",
@@ -45,6 +50,7 @@ export const levels = [
         description:
           "Take off to a stationary hover at 3 feet (1 meter) for 5 seconds, rotate the nose of the model 90 degrees to the left and hover for 5 seconds, then rotate the nose of the model 90 degrees to the right and back to the original tail-in orientation and hover for 5 seconds. Next rotate the nose of the model 90 degrees to the right and hover for 5 seconds, and finally rotate the nose of the model 90 degrees left and back to the original tail-in orientation, hover for 5 seconds, and land with skids completely in the landing area.",
         variations: "N/A",
+        url: "https://youtu.be/6KTPnrpf4hs?t=279s",
       },
       {
         id: "1.7",
@@ -52,6 +58,7 @@ export const levels = [
         description:
           "From landing area take-off, hover for 5 seconds, then move the model diagonally to the front-left corner of an imaginary 30-foot (10-meter) box, hover for 5 seconds, and then return to the center of the box and hover for 5 seconds. Repeat this with the remaining 3 corners of the box in a clockwise fashion.",
         variations: "N/A",
+        url: "https://youtu.be/6KTPnrpf4hs?t=346s",
       },
       {
         id: "1.8",
@@ -59,6 +66,7 @@ export const levels = [
         description:
           "From landing area take-off, hover for 5 seconds, move the model forward 15 feet (5 meters) and then move the model in a clockwise circle 30 feet (10 meters) in diameter while keeping the model in the tail-in orientation. Stop where you began the circle and hover for 5 seconds, then move backward to the landing area and hover for 5 seconds before landing with skids completely within the landing area. Repeat the same maneuver in a counter-clockwise manner.",
         variations: "CW, CCW",
+        url: "https://youtu.be/6KTPnrpf4hs?t=447s",
       },
     ],
   },
@@ -73,6 +81,7 @@ export const levels = [
         description:
           "From landing area take-off, hover for 5 seconds, move the model forward 15 feet (5 meters) and then move the model forward and to the right in a clockwise circle 15 feet (5 meters) in diameter while keeping the model in the tail-in orientation. When the model reaches the starting point for the first circle, then continue to move the model forward and to the left in a counter-clockwise circle 15 feet (5 meters) in diameter while keeping the model in the tail-in orientation. When you reach the starting point this time, move backward to the landing area and hover for 5 seconds before landing with skids completely within the landing area. Repeate in the opposite (reverse start) direction.",
         variations: "Forward, Reverse",
+        url: "https://youtu.be/Cm7p8Z7tuao?t=17s",
       },
       {
         id: "2.2",
@@ -80,6 +89,7 @@ export const levels = [
         description:
           "Take off from landing area and hover at a height of 6 feet (2 meters) for 5 seconds, then move the model forward 30 feet (10 meters) and execute a left turn such that the model is now parallel to the flight line. Continue to fly straight and level for 30 feet (10 meters) and then climb to 60 feet (20 meters) and execute a 180-degree right turn (tracing left side of circuit) and fly straight and level for 60 feet (20 meters) parallel to the flight line. Now execute another 180-degree right turn (tracing right side of circuit) and fly straight and level for 30 feet (10 meters) and stop in a hover over the circuit starting point. Descend to 6 feet (2 meters) and rotate the nose of the model 90 degrees to the right to the tail-in orientation, move backward 30 feet (10 meters), hover over the landing area for 5 seconds, and then land with skids completely within the landing area. Repeat in opposite (counter-clockwise direction).",
         variations: "CW, CCW",
+        url: "https://youtu.be/Cm7p8Z7tuao?t=185s",
       },
       {
         id: "2.3",
@@ -87,6 +97,7 @@ export const levels = [
         description:
           "Begin as described in 2.1 Circuits except execute a 225-degree right turn after the climb-out to enter the Figure 8. This will cause the model to cross in front of the pilot at a 45-degree right-side nose-in orientation at which point the model should be turned 270 degrees left to complete the right side of the Figure 8 and end up back in the center. Repeat in opposite (reverse start) direction.",
         variations: "Forward (Tail-In), Reverse (NoseIn)",
+        url: "https://youtu.be/Cm7p8Z7tuao?t=325s",
       },
       {
         id: "2.4",
@@ -94,6 +105,7 @@ export const levels = [
         description:
           "From straight and level flight from right to left (left side-in landing), execute a 180-degree right turn away from the pilot once model passes the pilot. Begin to slow down and execute another 180-degree turn towards the pilot once the model passes the pilot again. Now begin to reduce speed and height to descend gradually to the landing area. Land with skids completely within the landing area in left side-in orientation. Repeat in opposite direction.",
         variations: "Left, Right",
+        url: "https://youtu.be/Cm7p8Z7tuao?t=475s",
       },
       {
         id: "2.5",
@@ -101,6 +113,7 @@ export const levels = [
         description:
           "From a stationary hover, turn the nose of the model 360 degrees either right or left while maintaining constant altitude and control. Repeat in the opposite direction.",
         variations: "Left, Right",
+        url: "https://youtu.be/Cm7p8Z7tuao?t=535s",
       },
       {
         id: "2.6",
@@ -109,6 +122,7 @@ export const levels = [
           "From straight and level flight from right to left (left-side stall turn), pull the model vertical with a smooth input of backward elevator until the nose is pointing perpendicular to the horizon. When the model stops climbing, rotate the nose of the model 180 degrees left and allow the model to fall the same distance that it climbed before pulling back into straight and level flight. Repeat a left-side stall turn with a right pirouette and a right-side stall turn with left and right pirouettes.",
         variations:
           "Left-Side/Left-Piro, LeftSide/Right-Piro, Right-Side/LeftPiro, Right-Side/Right-Piro",
+        url: "https://youtu.be/Cm7p8Z7tuao?t=588s",
       },
       {
         id: "2.7",
@@ -116,6 +130,7 @@ export const levels = [
         description:
           "From straight and level flight from right to left (left-side loop), pull the model vertically through a smooth loop, keeping the loop as round as possible with appropriate collective inputs until the model resumes straight and level flight where the maneuver began. Repeat from left to right (right-side loop).",
         variations: "Left, Right",
+        url: "https://youtu.be/Cm7p8Z7tuao?t=627s",
       },
     ],
   },
@@ -130,6 +145,7 @@ export const levels = [
         description:
           "Hold a stationary nose-in hover with minimal vertical or lateral movement and hold for 1 minute.",
         variations: "N/A",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=30s",
       },
       {
         id: "3.2",
@@ -137,6 +153,7 @@ export const levels = [
         description:
           "Starting from a nose-in orientation, take off straight up from the landing area with a constant rate of climb and minimal lateral movement. Come to a complete stop at a height of approximately 3 feet (1 meter) with minimal vertical and lateral movement.",
         variations: "N/A",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=96s",
       },
       {
         id: "3.3",
@@ -144,6 +161,7 @@ export const levels = [
         description:
           "From landing area take-off into nose-in orientation, hover for 5 seconds, move the model forward (away from pilot) 15 feet (5 meters) and then move the model in a clockwise circle 30 feet (10 meters) in diameter while keeping the model in the nosein orientation. Stop where you began the circle and hover for 5 seconds, then move backward to the landing area and hover for 5 seconds before landing nose-in with skids completely within the landing area. Repeat the same maneuver in a counterclockwise manner.",
         variations: "N/A",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=110s",
       },
       {
         id: "3.4",
@@ -151,6 +169,7 @@ export const levels = [
         description:
           "From a stationary nose-in hover, land while still nose-in with the skids completely within the landing area.",
         variations: "N/A",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=235s",
       },
       {
         id: "3.5",
@@ -159,6 +178,7 @@ export const levels = [
           "From straight and level flight from right to left (left-side stall turn), pull the model vertical with a smooth input of backward elevator until the nose is pointing perpendicular to the horizon. When the model stops climbing, rotate the nose of the model 540 degrees left and allow the model to fall the same distance that it climbed before pulling back into straight and level flight. Repeat a left-side stall turn with a right pirouette and a right-side stall turn with left and right pirouettes.",
         variations:
           "Left-Side/Left-Piro, LeftSide/Right-Piro, Right-Side/LeftPiro, Right-Side/Right-Piro",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=248s",
       },
       {
         id: "3.6",
@@ -167,6 +187,7 @@ export const levels = [
           "From straight and level flight from right to left (left-side roll), execute a 360-degree roll to the left. Ensure that the model roles on its long axis rather than in a corkscrew (barrel roll). Repeat with other three variations.",
         variations:
           "Left-Side/Left-Roll, LeftSide/Right-Roll, Right-Side/LeftRoll, Right-Side/Right-Roll",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=293s",
       },
       {
         id: "3.7",
@@ -175,6 +196,7 @@ export const levels = [
           "Start by performing an inside loop as described in 2.7, but when the model is inverted and at the top of the loop, perform a 360-degree left pirouette and then complete the loop. The loop should remain parallel to the flight line at all times during the maneuver. Repeat with other three variations.",
         variations:
           "Left-Side/Left-Piro, LeftSide/Right-Piro, Right-Side/LeftPiro, Right-Side/Right-Piro",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=334s",
       },
       {
         id: "3.8",
@@ -183,6 +205,7 @@ export const levels = [
           "With the model flying straight and level from right to left, perform a 1/2 loop to inverted and then perform a 1/2 roll to upright. Then continue flying straight and level after the roll. Repeat from left to right and with both right and left rolls.",
         variations:
           "Left-Side/Left-Roll, LeftSide/Right-Roll, Right-Side/LeftRoll, Right-Side/Right-Roll",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=411s",
       },
       {
         id: "3.9",
@@ -191,6 +214,7 @@ export const levels = [
           "With the model flying straight and level from right to left, perform a 5/8 loop to inverted on a 45-degree angled downline and then perform a 1/2 roll to upright. Then level the model and continue flying straight and level after the roll. Repeat from left to right and with both right and left rolls.",
         variations:
           "Left-Side/Left-Roll, LeftSide/Right-Roll, Right-Side/LeftRoll, Right-Side/Right-Roll",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=463s",
       },
       {
         id: "3.10",
@@ -198,6 +222,7 @@ export const levels = [
         description:
           "Starting from a tail-in hover, rotate the model 90 degrees to a left side-in orientation and fly in a circle back to the starting point while maintaining constant altitude and speed. Repeat in counter-clockwise direction.",
         variations: "CW, CCW",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=521s",
       },
       {
         id: "3.11",
@@ -205,6 +230,7 @@ export const levels = [
         description:
           "Starting from an eye-level hover, move the model out to a SAFE distance and height. While maintaining constant altitude, speed, and heading, begin a circle to the right with the tail pointing to the center of the circle. As the model reaches the starting point, continue moving, but in the opposite direction with the nose pointing to the center of the circle. Repeat starting the circle to the left.",
         variations: "CW, CCW",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=586s",
       },
       {
         id: "3.12",
@@ -212,6 +238,7 @@ export const levels = [
         description:
           "Starting from an altitude of no less than 60 feet (20 meters) and on a heading parallel to the flight line, start the autorotation. Maintain a smooth and constant rate of descent directly to a 6-foot (2-meter) landing circle located 20 feet (6 meters) in front of you. The skids of the model must be entirely within the landing circle. The maneuver must be done starting from the right and from the left of the pilot.",
         variations: "Left, Right",
+        url: "https://youtu.be/lJ5aG-H5JWQ?t=657s",
       },
     ],
   },
@@ -226,6 +253,7 @@ export const levels = [
         description:
           "With the model inverted, fly at least 1 clockwise and 1 counter-clockwise circuit around the flying field.",
         variations: "CW, CCW",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=30s",
       },
       {
         id: "4.2",
@@ -233,6 +261,7 @@ export const levels = [
         description:
           "With the model inverted and no more than 30 feet (10 meters) above the landing area, hover tail-in and hold for 10 seconds. Repeat nose-in, side-in left, and side-in right.",
         variations: "Tail-In, Nose-In, Nose-Left, NoseRight",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=69s",
       },
       {
         id: "4.3",
@@ -240,6 +269,7 @@ export const levels = [
         description:
           "From a stationary inverted hover, turn the nose of the model 360 degrees either right or left while maintaining constant altitude and control. Repeat in the opposite direction.",
         variations: "CW, CCW",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=119s",
       },
       {
         id: "4.4",
@@ -247,6 +277,7 @@ export const levels = [
         description:
           "From level inverted flight parallel to the flight line from right to left, execute a 225-degree right turn to enter the Figure 8. This will cause the model to cross in front of the pilot at a 45-degree right-side nose-in orientation at which point the model should be turned 270 degrees left to complete the right side of the Figure 8 and end up back in the center. Repeat in opposite (reverse start) direction.",
         variations: "Forward (Tail-In), Reverse (NoseIn)",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=165s",
       },
       {
         id: "4.5",
@@ -254,6 +285,7 @@ export const levels = [
         description:
           "With the model hovering tail-in at a safe distance, flip the model to right while maintaining constant altitude and heading until it has completed two rolls. Repeat to the left and in nose-in.",
         variations: "Tail-In/Left, Tail-In/Right, NoseIn/Left, Nose-In/Right",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=218s",
       },
       {
         id: "4.6",
@@ -262,6 +294,7 @@ export const levels = [
           "Starting from an altitude of no less than 60 feet (20 meters) and on a heading parallel to the flight line, start the autorotation. Maintain a smooth and constant rate of descent directly to a 6-foot (2-meter) landing circle located 20 feet (6 meters) in front of you. The model must complete a 180-degree turn after the autorotation started. The skids of the model must be entirely within the landing circle. The maneuver must be done starting from the right and from the left and the turn must be done both clockwise and counter-clockwise.",
         variations:
           "Left-Side/Left-Turn, LeftSide/Right-Turn, Right-Side/LeftTurn, Right-Side/Right-Turn",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=248s",
       },
       {
         id: "4.7",
@@ -269,6 +302,7 @@ export const levels = [
         description:
           "With the model hovering tail-in at a safe distance, flip forward to an inverted nose-in hover and hold for 5 seconds then flip forward to a tail-in hover and hold for 5 seconds. Repeat from nose-in.",
         variations: "Tail-In, Nose-In, Nose-Left, NoseRight",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=280s",
       },
       {
         id: "4.8",
@@ -276,6 +310,7 @@ export const levels = [
         description:
           "With the model hovering tail-in at a safe distance, flip backward to an inverted nose-in hover and hold for 5 seconds then flip backward to a tail-in hover and hold for 5 seconds. Repeat from nose-in.",
         variations: "Tail-In, Nose-In, Nose-Left, NoseRight",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=344s",
       },
       {
         id: "4.9",
@@ -283,6 +318,7 @@ export const levels = [
         description:
           "With the model hovering tail-in at a safe distance, flip sidways to an inverted tail-in hover and hold for 5 seconds then flip sideways to a tail-in hover and hold for 5 seconds. Repeat from nose-in and in opposite direction.",
         variations: "Tail-In/Left, Tail-In/Right, NoseIn/Left, Nose-In/Right",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=407s",
       },
       {
         id: "4.10",
@@ -291,6 +327,7 @@ export const levels = [
           "With the model hovering tail-in at a safe distance, flip the model forward while maintaining constant altitude and heading until it has completed two flips. Repeat backward and in nose-in.",
         variations:
           "Tail-In/Forward, Tail-In/Backward, Nose-In/Forward, NoseIn/Backward",
+        url: "https://youtu.be/Fr7FyjfXeg0?t=463s",
       },
     ],
   },
@@ -305,6 +342,7 @@ export const levels = [
         description:
           "With the model upright, fly at least 1 clockwise and 1 counter-clockwise circuit around the flying field in the backward direction.",
         variations: "Left, Right",
+        url: "https://youtu.be/7xHw3uRXuzw?t=0s",
       },
       {
         id: "5.2",
@@ -312,6 +350,7 @@ export const levels = [
         description:
           "From level upright and backward flight parallel to the flight line from right to left, execute a 225-degree right turn to enter the Figure 8. This will cause the model to cross in front of the pilot at a 45-degree right-side nose-in orientation at which point the model should be turned 270 degrees left to complete the right side of the Figure 8 and end up back in the center. Repeat in opposite (reverse start) direction.",
         variations: "Forward (Tail-In), Reverse (NoseIn)",
+        url: "https://youtu.be/7xHw3uRXuzw?t=40s",
       },
       {
         id: "5.3",
@@ -319,6 +358,7 @@ export const levels = [
         description:
           "From straight and level backward flight from right to left (left-side loop), pull the model vertically through a smooth loop, keeping the loop as round as possible with appropriate collective inputs until the model resumes straight and level flight where the maneuver began. Repeate from left to right (right-side loop).",
         variations: "Left, Right",
+        url: "https://youtu.be/7xHw3uRXuzw?t=96s",
       },
       {
         id: "5.4",
@@ -327,6 +367,7 @@ export const levels = [
           "From straight and level backward flight from right to left (left-side roll), execute a 360-degree roll to the left. Ensure that the model roles on its long axis rather than in a corkscrew (barrel roll). Repeat with other three variations.",
         variations:
           "Left-Side/Left-Roll, LeftSide/Right-Roll, Right-Side/LeftRoll, Right-Side/Right-Roll",
+        url: "https://youtu.be/7xHw3uRXuzw?t=124s",
       },
       {
         id: "5.5",
@@ -334,6 +375,7 @@ export const levels = [
         description:
           "With the model inverted, fly at least 1 clockwise and 1 counter-clockwise circuit around the flying field in the backward direction.",
         variations: "Left, Right",
+        url: "https://youtu.be/7xHw3uRXuzw?t=165s",
       },
       {
         id: "5.6",
@@ -341,6 +383,7 @@ export const levels = [
         description:
           "From level inverted and backward flight parallel to the flight line from right to left, execute a 225-degree right turn to enter the Figure 8. This will cause the model to cross in front of the pilot at a 45-degree right-side nose-in orientation at which point the model should be turned 270 degrees left to complete the right side of the Figure 8 and end up back in the center. Repeat in opposite (reverse start) direction.",
         variations: "Forward (Tail-In), Reverse (NoseIn)",
+        url: "https://youtu.be/7xHw3uRXuzw?t=208s",
       },
       {
         id: "5.7",
@@ -348,6 +391,7 @@ export const levels = [
         description:
           "Starting from an altitude of no less than 60 feet (20 meters) and on a heading parallel to the flight line and inverted, start the autorotation. During the autorotation, roll the model left or right to upright. Maintain a smooth and constant rate of descent directly to a 6-foot (2-meter) landing circle located 20 feet (6 meters) in front of you. The skids of the model must be entirely within the landing circle. The maneuver must be done starting from the right and from the left of the pilot.",
         variations: "Left, Right",
+        url: "https://youtu.be/7xHw3uRXuzw?t=258s",
       },
       {
         id: "5.8",
@@ -356,6 +400,7 @@ export const levels = [
           "With the model flying straight and level from right to left, roll to the left (toward the pilot), reduce collective to zero (center stick) and execute at least 1 full pirouette to the right. Exit by rolling to the right, adding collective and fly away upright straight and level. Repeat from left to right, with both piro directions, and both roll directions.",
         variations:
           "Left-Side/Left-Roll/Left-Piro, LeftSide/Right-Roll/Right-Piro, RightSide/Left-Roll/Left-Piro, RightSide/Right-Roll/Right-Piro",
+        url: "https://youtu.be/7xHw3uRXuzw?t=302s",
       },
       {
         id: "5.9",
@@ -364,6 +409,7 @@ export const levels = [
           "Starting from an altitude of no less than 60 feet (20 meters), roll left to knife edge add forward elevator. The model must complete at least 3 complete tumbles before rolling back to the right to exit the maneuver into an upright hover. Repeat with a right roll entry and backward elevator.",
         variations:
           "Left-Roll/Forward, LeftRoll/Backward, RightRoll/Forward, Right-Roll/Backward",
+        url: "https://youtu.be/7xHw3uRXuzw?t=344s",
       },
       {
         id: "5.10",
@@ -372,6 +418,7 @@ export const levels = [
           "With the model in a tail-in hover, execute at least 5 elevator tic-tocs with the tail down while maintaining altitude and minimizing lateral drift. Repeat with nose-in tail-up elevator and left and right side-in left and right aileron. These are all skids out maneuvers.",
         variations:
           "Nose-Up Elevator, Nose-Down Elevator, Nose-Left Aileron, NoseRight Aileron",
+        url: "https://youtu.be/7xHw3uRXuzw?t=385s",
       },
       {
         id: "5.11",
@@ -380,6 +427,7 @@ export const levels = [
           "From straight and level upright forward flight from right to left (left-side vertical 8), pull the model vertically through a smooth inside 1/2 loop until the model reaches inverted and then give forward elevator and negative collective to push the model up through a smooth outside full loop. When them model reaches its original inverted point, complete the remaining portion of the inside 1/2 loop. Exit into straight and level flight. Repeate from left to right (right-side vertical 8). Repeat from backward upright flight.",
         variations:
           "Left-Side/Forward, LeftSide/Backward, RightSide/Forward, RightSide/Backward",
+        url: "https://youtu.be/7xHw3uRXuzw?t=438s",
       },
       {
         id: "5.12",
@@ -388,6 +436,7 @@ export const levels = [
           "From straight and level upright flight from right to left, complete at least 3 consecutive backward flips while maintaining altitude and forward motion. Repeat with backward flight and forward flips and from left to right.",
         variations:
           "Left-Side/Forward, LeftSide/Backward, RightSide/Forward, RightSide/Backward",
+        url: "https://youtu.be/7xHw3uRXuzw?t=534s",
       },
     ],
   },
@@ -402,6 +451,7 @@ export const levels = [
         description:
           "From level sideways tail-in flight from right to left (left-side loop), pull the model vertically through a smooth loop, keeping the loop as round as possible with appropriate collective inputs until the model resumes level flight where the maneuver began while maintaining the tail-in heading. Repeat from left to right (right-side loop) and in nose-in.",
         variations: "Tail-In/Left, Tail-In/Right, NoseIn/Left, Nose-In/Right",
+        url: "https://youtu.be/rwHxtfx8DzM?t=57s",
       },
       {
         id: "6.2",
@@ -409,6 +459,7 @@ export const levels = [
         description:
           "From level sideways inverted tail-in flight from right to left (left-side loop), pull the model vertically through a smooth loop, keeping the loop as round as possible with appropriate collective inputs until the model resumes level flight where the maneuver began while maintaining the tail-in heading. Repeate from left to right (right-side loop) and in nose-in.",
         variations: "Tail-In/Left, Tail-In/Right, NoseIn/Left, Nose-In/Right",
+        url: "https://youtu.be/rwHxtfx8DzM?t=122s",
       },
       {
         id: "6.3",
@@ -417,6 +468,7 @@ export const levels = [
           "From level sideways tail-in flight from either right to left or left to right, complete at least 3 consecutive forward flips while maintaining the tail-in heading and sideways motion. Repeat backward and in nose-in.",
         variations:
           "Tail-In/Forward, Tail-In/Backward, Nose-In/Forward, NoseIn/Backward",
+        url: "https://youtu.be/rwHxtfx8DzM?t=186s",
       },
       {
         id: "6.4",
@@ -424,6 +476,7 @@ export const levels = [
         description:
           "With the model in an upright left side-in hover, execute large backward rainbow (at least 10 feet or 3 meters per half-flip) to a left side-in inverted hover then execute a large forward rainbow back to an upright left side-in hover. This must be done while minimizing lateral drift and executing a crisp stop at each end of the rainbow. Repeat from right side-in.",
         variations: "Left-Side, Right-Side",
+        url: "https://youtu.be/rwHxtfx8DzM?t=242s",
       },
       {
         id: "6.5",
@@ -431,6 +484,7 @@ export const levels = [
         description:
           "With the model in a nose-in hover, execute at least 5 elevator tic-tocs with the tail down while maintaining altitude and minimizing lateral drift. Repeat with tail-in tail-up elevator and left and right side-in right and left aileron. These are all skids in maneuvers.",
         variations: "Elevator Up, Elevator Down, Aileron Left, Aileron Right",
+        url: "https://youtu.be/rwHxtfx8DzM?t=270s",
       },
       {
         id: "6.6",
@@ -438,6 +492,7 @@ export const levels = [
         description:
           "With the model in a tail-in hover, execute 1 elevator tic-toc with the tail down while maintaining altitude and minimizing lateral drift. During the second half of this elevator tic-toc, smoothly pirouette 90 degrees to the left and perform 1 left aileron tic-toc. Repeat the 90-degree pirouetting after each half-cycle until the model reaches the original tail-down elevator tic-toc orientation. The pilot must perform at least 3 consecutive 360-degree rotations. The tail of the model should appear to tic-tock at each of the four directions of a clock starting at 6 'o clock. Repeat with a right pirouette. These are all skids out maneuvers.",
         variations: "CW, CCW",
+        url: "https://youtu.be/rwHxtfx8DzM?t=319s",
       },
       {
         id: "6.7",
@@ -445,6 +500,7 @@ export const levels = [
         description:
           "With the model in a tail-in hover, execute at least 3 consecutive full forward flips while simultaneously pirouetting to the left. The model must complete 1 full pirouette for every full forward flip completed. Repeat with right pirouettes. A left-pirouetting maneuver requires a clockwise cyclic stir, whereas a right-pirouetting maneuver requires a counter-clockwise stir.",
         variations: "Left, Right",
+        url: "https://youtu.be/rwHxtfx8DzM?t=339s",
       },
       {
         id: "6.8",
@@ -452,6 +508,7 @@ export const levels = [
         description:
           "With the model in a tail-in hover, execute a mobius with left rudder while maintaining altitude and minimizing lateral drift. The model must complete 1 full pirouette for every full mobius completed. A mobius can be thought of as a half-pirouetting flip that has been stretched out. Alternately, it appears as a Figure 8 with one half performed inverted and a transition to upright for the second half that is executed at the center. Repeat with right pirouettes. A left-pirouetting maneuver requires a clockwise cyclic stir, whereas a right-pirouetting maneuver requires a counter-clockwise stir.",
         variations: "Left, Right",
+        url: "https://youtu.be/rwHxtfx8DzM?t=357s",
       },
       {
         id: "6.9",
@@ -459,6 +516,7 @@ export const levels = [
         description:
           "From straight and level flight from right to left (clockwise circle), continuously roll the model to the right while executing a flying circle. Keep the circle as round and level as possible. Repeate from left to right with a left roll (counter-clockwise circle).",
         variations: "CW, CCW",
+        url: "https://youtu.be/rwHxtfx8DzM?t=405s",
       },
     ],
   },
@@ -474,6 +532,7 @@ export const levels = [
           "From straight and level upright flight from right to left (left-side loop), begin pirouetting to the left and pull the model vertically through a smooth loop, keeping the loop as round as possible with appropriate collective inputs until the model resumes straight and level flight where the maneuver began. During the loop, the model must pirouette continuously and complete at least 2 pirouettes. Repeat from with a right pirouette and from left to right (right-side loop).",
         variations:
           "Left-Side/Left-Piro, LeftSide/Right-Piro, Right-Side/LeftPiro, Right-Side/Right-Piro",
+        url: "https://youtu.be/7HeJoPii1dQ?t=0s",
       },
       {
         id: "7.2",
@@ -482,6 +541,7 @@ export const levels = [
           "From straight and level inverted flight from right to left (left-side loop), begin pirouetting to the left and pull the model vertically through a smooth loop, keeping the loop as round as possible with appropriate collective inputs until the model resumes straight and level flight where the maneuver began. During the loop, the model must pirouette continuously and complete at least 2 pirouettes. Repeat from with a right pirouette and from left to right (right-side loop).",
         variations:
           "Left-Side/Left-Piro, LeftSide/Right-Piro, Right-Side/LeftPiro, Right-Side/Right-Piro",
+        url: "https://youtu.be/7HeJoPii1dQ?t=66s",
       },
       {
         id: "7.3",
@@ -490,6 +550,7 @@ export const levels = [
           "From level upright flight parallel to the flight line from right to left, begin pirouetting to the left and execute a 225-degree right turn to enter the Figure 8. This will cause the model to cross in front of the pilot at a 45-degree right-side nose-in orientation at which point the model should be turned 270 degrees left to complete the right side of the Figure 8 and end up back in the center. During the Figure 8, the model must pirouette continuously. Repeat in opposite (reverse start) direction and with a right pirouette.",
         variations:
           "Forward/Left-Piro, Forward/RightPiro, Reverse/Left-Piro, Reverse/Right-Piro",
+        url: "https://youtu.be/7HeJoPii1dQ?t=136s",
       },
       {
         id: "7.4",
@@ -498,6 +559,7 @@ export const levels = [
           "From level inverted flight parallel to the flight line from right to left, begin pirouetting to the left and execute a 225-degree right turn to enter the Figure 8. This will cause the model to cross in front of the pilot at a 45-degree right-side nose-in orientation at which point the model should be turned 270 degrees left to complete the right side of the Figure 8 and end up back in the center. During the Figure 8, the model must pirouette continuously. Repeat in opposite (reverse start) direction and with a right pirouette.",
         variations:
           "Forward/Left-Piro, Forward/RightPiro, Reverse/Left-Piro, Reverse/Right-Piro",
+        url: "https://youtu.be/7HeJoPii1dQ?t=251s",
       },
       {
         id: "7.5",
@@ -505,6 +567,7 @@ export const levels = [
         description:
           "With the model in a tail-in hover, execute at least 3 consecutive full forward flips while simultaneously pirouetting to the left. The model must complete 4 full pirouettes for every full forward flip completed. Repeat with right pirouettes. A left-pirouetting maneuver requires a clockwise cyclic stir, whereas a right-pirouetting maneuver requires a counter-clockwise stir.",
         variations: "Left, Right",
+        url: "https://youtu.be/7HeJoPii1dQ?t=366s",
       },
       {
         id: "7.6",
@@ -512,6 +575,7 @@ export const levels = [
         description:
           "With the model in a nose-in hover, execute 1 elevator tic-toc with the tail down while maintaining altitude and minimizing lateral drift. During the second half of this elevator tic-toc, smoothly pirouette 90 degrees to the left and perform 1 left aileron tic-toc. Repeat the 90-degree pirouetting after each half-cycle until the model reaches the original tail-down elevator tic-toc orientation. The pilot must perform at least 3 consecutive 360-degree rotations. The tail of the model should appear to tic-tock at each of the four directions of a clock starting at 6 'o clock. Repeat with a right pirouette. These are all skids out maneuvers.",
         variations: "CW, CCW",
+        url: "https://youtu.be/7HeJoPii1dQ?t=406s",
       },
       {
         id: "7.7",
@@ -520,6 +584,7 @@ export const levels = [
           "With the model in a tail-in hover, execute continuous left double-pirouetting flips while moving the model to the left 30 feet (10 meters), up 30 feet (10 meters), to the right 60 feet (20 meters), down 30 feet (10 meters), and finally back to the left 30 feet (10 meters). Repeat with right pirouettes and in opposite direction. A left-pirouetting maneuver requires a clockwise cyclic stir, whereas a right-pirouetting maneuver requires a counter-clockwise stir.",
         variations:
           "Left-Piro/CW, Left-Piro/CCW, Right-Piro/CW, Right-Piro/CCW",
+        url: "https://youtu.be/7HeJoPii1dQ?t=442s",
       },
       {
         id: "7.8",
@@ -527,6 +592,7 @@ export const levels = [
         description:
           "Starting from an altitude of no less than 60 feet (20 meters) and on a heading parallel to the flight line and upright, start the autorotation. During the autorotation, fully pirouette the model left or right for at least 3 consecutive 360-degree rotations. Maintain a smooth and constant rate of descent directly to a 6-foot (2-meter) landing circle located 20 feet (6 meters) in front of you. The skids of the model must be entirely within the landing circle. The maneuver must be done starting from the right and from the left of the pilot.",
         variations: "Left, Right",
+        url: "https://youtu.be/7HeJoPii1dQ?t=559s",
       },
       {
         id: "7.9",
@@ -534,6 +600,7 @@ export const levels = [
         description:
           "With the model in a tail-in hover, begin the maneuver by executing elevator tic-tocs with the tail down and then transition into continuously left pirouetting tic-toc. The model must complete 1 full pirouette per tic-toc cycle while maintaining altitude and minimizing lateral drift. The pilot must perform at least 5 consecutive pirouetting tic-tocs. Repeat with a right pirouette. This is a skids out maneuver.",
         variations: "Left, Right",
+        url: "https://youtu.be/7HeJoPii1dQ?t=621s",
       },
     ],
   },

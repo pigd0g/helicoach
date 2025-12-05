@@ -57,6 +57,7 @@ function App() {
 
   const handleManeuverClick = (maneuver) => {
     setSelectedManeuver(maneuver);
+    setShowVideo(false);
     setView("detail");
     window.scrollTo(0, 0);
   };
@@ -840,6 +841,85 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
                     </p>
                   </div>
                 </div>
+
+                {selectedManeuver.url && (
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect
+                          x="2"
+                          y="2"
+                          width="20"
+                          height="20"
+                          rx="2.18"
+                          ry="2.18"
+                        ></rect>
+                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <line x1="2" y1="7" x2="7" y2="7"></line>
+                        <line x1="2" y1="17" x2="7" y2="17"></line>
+                        <line x1="17" y1="17" x2="22" y2="17"></line>
+                        <line x1="17" y1="7" x2="22" y2="7"></line>
+                      </svg>
+                      Video Guide
+                    </h3>
+                    <button
+                      onClick={() => setShowVideo(!showVideo)}
+                      className="w-full py-3 px-4 bg-white border border-slate-200 rounded-xl text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-red-600"
+                      >
+                        <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+                        <path d="m10 15 5-3-5-3z" />
+                      </svg>
+                      {showVideo
+                        ? "Hide Video Guide"
+                        : "RC Helicopter Richard's Video Guide"}
+                    </button>
+                    {showVideo && (
+                      <div className="rounded-xl overflow-hidden shadow-md animate-in fade-in slide-in-from-top-4 duration-300">
+                        <iframe
+                          width="100%"
+                          height="300"
+                          src={`https://www.youtube.com/embed/${selectedManeuver.url
+                            .split("?")[0]
+                            .split("/")
+                            .pop()}?start=${parseInt(
+                            new URLSearchParams(
+                              selectedManeuver.url.split("?")[1]
+                            ).get("t") || 0
+                          )}&autoplay=1`}
+                          title="YouTube video player"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
