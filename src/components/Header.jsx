@@ -25,8 +25,10 @@ export default function Header({ view, onBack, onAbout }) {
             </svg>
           </button>
         )}
-        <img src="/logow.png" alt="HeliCoach Logo" className="h-8 w-8 mr-2" />
-        <h1 className="text-lg font-bold tracking-wide">HeliCoach</h1>
+        <a className="flex items-center justify-center1" href="/">
+          <img src="/logow.png" alt="HeliCoach Logo" className="h-8 w-8 mr-2" />
+          <h1 className="text-lg font-bold tracking-wide">HeliCoach</h1>
+        </a>
         {view !== "about" && (
           <button
             className="absolute right-4 p-2 -mr-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20"

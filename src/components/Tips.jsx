@@ -23,7 +23,7 @@ export default function Tips({ tips, currentIndex, onPrev, onNext }) {
         </h3>
       </div>
 
-      <p className="text-slate-600 text-lg mb-6 min-h-16">
+      <p className="text-slate-600 text-md mb-2 min-h-10">
         {tips[currentIndex]}
       </p>
 
