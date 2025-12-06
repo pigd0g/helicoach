@@ -53,13 +53,6 @@ export default function LevelsView({
         </button>
       </div>
 
-      <Tips
-        tips={tips}
-        currentIndex={currentTipIndex}
-        onPrev={prevTip}
-        onNext={nextTip}
-      />
-
       <div className="grid gap-4 sm:grid-cols-2">
         {levels.map((level) => {
           const progress = getLevelProgress(level);
@@ -73,6 +66,13 @@ export default function LevelsView({
           );
         })}
       </div>
+
+      <Tips
+        tips={tips}
+        currentIndex={currentTipIndex}
+        onPrev={prevTip}
+        onNext={nextTip}
+      />
     </div>
   );
 }
