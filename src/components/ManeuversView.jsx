@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Confetti from "react-confetti-boom";
 
 export default function ManeuversView({
@@ -12,6 +12,12 @@ export default function ManeuversView({
 }) {
   const [showConfetti, setShowConfetti] = useState(false);
 
+  useEffect(() => {
+    if (!showConfetti) return;
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }, [showConfetti]);
+
   const handleToggleLevelCompletion = (e) => {
     e.stopPropagation();
     const wasComplete = getLevelProgress(selectedLevel).percentage === 100;
@@ -20,7 +26,6 @@ export default function ManeuversView({
     // Show confetti when marking level as completed (not when unmarking)
     if (!wasComplete) {
       setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
     }
   };
 

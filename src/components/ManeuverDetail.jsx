@@ -19,6 +19,12 @@ export default function ManeuverDetail({
     return () => clearTimeout(t);
   }, [copied]);
 
+  useEffect(() => {
+    if (!showConfetti) return;
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }, [showConfetti]);
+
   const handleToggleCompletion = () => {
     const wasCompleted = completedManeuvers[selectedManeuver.id];
     toggleCompletion(selectedManeuver.id);
@@ -26,7 +32,6 @@ export default function ManeuverDetail({
     // Show confetti when marking as completed (not when unmarking)
     if (!wasCompleted) {
       setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
     }
   };
 
