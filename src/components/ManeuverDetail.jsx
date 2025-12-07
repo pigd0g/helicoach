@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Confetti from "react-confetti-boom";
 
 export default function ManeuverDetail({
   selectedManeuver,
@@ -10,12 +11,24 @@ export default function ManeuverDetail({
   if (!selectedManeuver) return null;
 
   const [copied, setCopied] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (!copied) return;
     const t = setTimeout(() => setCopied(false), 1800);
     return () => clearTimeout(t);
   }, [copied]);
+
+  const handleToggleCompletion = () => {
+    const wasCompleted = completedManeuvers[selectedManeuver.id];
+    toggleCompletion(selectedManeuver.id);
+    
+    // Show confetti when marking as completed (not when unmarking)
+    if (!wasCompleted) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+    }
+  };
 
   const copyUrlToClipboard = async () => {
     try {
@@ -28,6 +41,16 @@ export default function ManeuverDetail({
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 pb-24">
+      {showConfetti && (
+        <Confetti
+          mode="boom"
+          particleCount={50}
+          colors={["#10b981", "#34d399", "#6ee7b7", "#a7f3d0"]}
+          launchSpeed={1.2}
+          deg={270}
+          effectInterval={0}
+        />
+      )}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
         <div className="bg-slate-50 border-b border-slate-100 p-6">
           <div className="flex items-center gap-3 mb-2">
@@ -164,7 +187,7 @@ export default function ManeuverDetail({
 
       <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center z-40">
         <button
-          onClick={() => toggleCompletion(selectedManeuver.id)}
+          onClick={handleToggleCompletion}
           className={`max-w-md w-full shadow-xl rounded-full py-4 px-6 font-bold text-lg flex items-center justify-center gap-3 transition-all transform active:scale-95 ${
             completedManeuvers[selectedManeuver.id]
               ? "bg-white text-slate-700 border-2 border-slate-200 hover:bg-slate-50"

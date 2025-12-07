@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import Confetti from "react-confetti-boom";
 
 export default function ManeuversView({
   selectedLevel,
@@ -9,8 +10,32 @@ export default function ManeuversView({
   handleManeuverClick,
   toggleLevelCompletion,
 }) {
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const handleToggleLevelCompletion = (e) => {
+    e.stopPropagation();
+    const wasComplete = getLevelProgress(selectedLevel).percentage === 100;
+    toggleLevelCompletion(selectedLevel);
+    
+    // Show confetti when marking level as completed (not when unmarking)
+    if (!wasComplete) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {showConfetti && (
+        <Confetti
+          mode="boom"
+          particleCount={100}
+          colors={["#10b981", "#34d399", "#6ee7b7", "#a7f3d0", "#fbbf24", "#f59e0b"]}
+          launchSpeed={1.5}
+          deg={270}
+          effectInterval={0}
+        />
+      )}
       <div
         className={`${
           getLevelProgress(selectedLevel).percentage === 100
@@ -159,10 +184,7 @@ export default function ManeuversView({
 
       <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center z-40">
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleLevelCompletion(selectedLevel);
-          }}
+          onClick={handleToggleLevelCompletion}
           className={`max-w-md w-full shadow-xl rounded-full py-4 px-6 font-bold text-lg flex items-center justify-center gap-3 transition-all transform active:scale-95 ${
             getLevelProgress(selectedLevel).percentage === 100
               ? "bg-white text-slate-700 border-2 border-slate-200 hover:bg-slate-50"
