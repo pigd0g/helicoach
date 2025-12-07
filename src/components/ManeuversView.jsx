@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import ConfettiCelebration from "./ConfettiCelebration";
 
 export default function ManeuversView({
   selectedLevel,
@@ -9,8 +10,28 @@ export default function ManeuversView({
   handleManeuverClick,
   toggleLevelCompletion,
 }) {
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    if (!showConfetti) return;
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }, [showConfetti]);
+
+  const handleToggleLevelCompletion = (e) => {
+    e.stopPropagation();
+    const wasComplete = getLevelProgress(selectedLevel).percentage === 100;
+    toggleLevelCompletion(selectedLevel);
+
+    // Show confetti when marking level as completed (not when unmarking)
+    if (!wasComplete) {
+      setShowConfetti(true);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {showConfetti && <ConfettiCelebration />}
       <div
         className={`${
           getLevelProgress(selectedLevel).percentage === 100
@@ -159,10 +180,7 @@ export default function ManeuversView({
 
       <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center z-40">
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleLevelCompletion(selectedLevel);
-          }}
+          onClick={handleToggleLevelCompletion}
           className={`max-w-md w-full shadow-xl rounded-full py-4 px-6 font-bold text-lg flex items-center justify-center gap-3 transition-all transform active:scale-95 ${
             getLevelProgress(selectedLevel).percentage === 100
               ? "bg-white text-slate-700 border-2 border-slate-200 hover:bg-slate-50"
