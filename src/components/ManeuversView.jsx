@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Confetti from "react-confetti-boom";
+import ConfettiCelebration from "./ConfettiCelebration";
 
 export default function ManeuversView({
   selectedLevel,
@@ -22,7 +22,7 @@ export default function ManeuversView({
     e.stopPropagation();
     const wasComplete = getLevelProgress(selectedLevel).percentage === 100;
     toggleLevelCompletion(selectedLevel);
-    
+
     // Show confetti when marking level as completed (not when unmarking)
     if (!wasComplete) {
       setShowConfetti(true);
@@ -31,16 +31,7 @@ export default function ManeuversView({
 
   return (
     <div className="space-y-6">
-      {showConfetti && (
-        <Confetti
-          mode="boom"
-          particleCount={100}
-          colors={["#10b981", "#34d399", "#6ee7b7", "#a7f3d0", "#fbbf24", "#f59e0b"]}
-          launchSpeed={1.5}
-          deg={270}
-          effectInterval={0}
-        />
-      )}
+      {showConfetti && <ConfettiCelebration />}
       <div
         className={`${
           getLevelProgress(selectedLevel).percentage === 100

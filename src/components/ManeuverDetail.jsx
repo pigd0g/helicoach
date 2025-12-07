@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Confetti from "react-confetti-boom";
+import ConfettiCelebration from "./ConfettiCelebration";
 
 export default function ManeuverDetail({
   selectedManeuver,
@@ -28,7 +28,7 @@ export default function ManeuverDetail({
   const handleToggleCompletion = () => {
     const wasCompleted = completedManeuvers[selectedManeuver.id];
     toggleCompletion(selectedManeuver.id);
-    
+
     // Show confetti when marking as completed (not when unmarking)
     if (!wasCompleted) {
       setShowConfetti(true);
@@ -46,16 +46,7 @@ export default function ManeuverDetail({
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 pb-24">
-      {showConfetti && (
-        <Confetti
-          mode="boom"
-          particleCount={50}
-          colors={["#10b981", "#34d399", "#6ee7b7", "#a7f3d0"]}
-          launchSpeed={1.2}
-          deg={270}
-          effectInterval={0}
-        />
-      )}
+      {showConfetti && <ConfettiCelebration />}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
         <div className="bg-slate-50 border-b border-slate-100 p-6">
           <div className="flex items-center gap-3 mb-2">
