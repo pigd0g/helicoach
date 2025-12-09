@@ -1,8 +1,11 @@
 import React from "react";
+import PWAInstall from "./PWAInstall";
 
 export default function About({ handleExportData, handleImportData }) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+      <PWAInstall />
+      
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <h2 className="text-2xl font-bold text-slate-900 mb-4">About</h2>
         <div className="space-y-4 text-slate-700 leading-relaxed">
