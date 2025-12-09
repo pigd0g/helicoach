@@ -12,6 +12,7 @@ function App() {
   const [view, setView] = useState("levels");
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [showVideo, setShowVideo] = useState(false);
+  const [showVideoMove, setShowVideoMove] = useState(false);
   const [selectedManeuver, setSelectedManeuver] = useState(null);
   const [currentTipIndex, setCurrentTipIndex] = useState(() =>
     Math.floor(Math.random() * tips.length)
@@ -324,8 +325,8 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
           <ManeuversView
             selectedLevel={selectedLevel}
             getLevelProgress={getLevelProgress}
-            showVideo={showVideo}
-            setShowVideo={setShowVideo}
+            showVideo={showVideoMove}
+            setShowVideo={setShowVideoMove}
             completedManeuvers={completedManeuvers}
             handleManeuverClick={handleManeuverClick}
             toggleLevelCompletion={toggleLevelCompletion}
