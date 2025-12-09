@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 // Detect iOS outside of component
+// Using multiple feature detection methods for better reliability
 const detectIOS = () => {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (typeof window === 'undefined') return false;
+  
+  // Check for iOS-specific features
+  const isIOSUserAgent = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isIOSStandalone = window.navigator?.standalone !== undefined;
+  
+  return isIOSUserAgent || isIOSStandalone;
 };
 
 // Check if already installed
 const checkInstalled = () => {
   if (typeof window === 'undefined') return false;
   return (
-    window.navigator.standalone === true ||
+    window.navigator?.standalone === true ||
     window.matchMedia("(display-mode: standalone)").matches
   );
 };
@@ -17,7 +24,7 @@ const checkInstalled = () => {
 export default function PWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
-  const isIOS = detectIOS();
+  const isIOS = useMemo(() => detectIOS(), []);
   const [isInstalled, setIsInstalled] = useState(() => checkInstalled());
 
   useEffect(() => {
