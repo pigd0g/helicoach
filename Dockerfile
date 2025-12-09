@@ -8,7 +8,7 @@ ENV VITE_GA_ID=$VITE_GA_ID
 
 # Install dependencies (use package-lock if present)
 COPY package*.json ./
-RUN npm ci --silent
+RUN npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
 # Copy source and build
 COPY . .
