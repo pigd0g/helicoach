@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { slugify, trackEvent } from "../analytics";
 import ConfettiCelebration from "./ConfettiCelebration";
 
 export default function ManeuversView({
@@ -27,6 +28,17 @@ export default function ManeuversView({
     if (!wasComplete) {
       setShowConfetti(true);
     }
+
+    const nextStatus = wasComplete ? "incomplete" : "complete";
+    trackEvent(
+      `level_${nextStatus}_${selectedLevel.id}_${slugify(selectedLevel.title)}`,
+      {
+        type: "level",
+        id: selectedLevel.id,
+        title: selectedLevel.title,
+        status: nextStatus,
+      }
+    );
   };
 
   return (

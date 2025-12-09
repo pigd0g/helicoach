@@ -19,9 +19,9 @@ export default function LevelsView({
         Proficiency Program for RC Heli pilots of all levels.
       </p>
       <p className="text-center text-xs text-gray-500">
-        Start with the basics and progress to aerobatics and advanced 3d flight.
-        Track progress, level up at your pace, and get AI coaching from you AI
-        assistant.
+        Start with the basics, progress to aerobatics and learn 3d moves like
+        piroflips and tic-tocs. Track progress, level up at your pace, and get
+        AI coaching from your AI assistant.
       </p>
       <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg">
         <h2 className="text-lg font-bold text-white mb-2">

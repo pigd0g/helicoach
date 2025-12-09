@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { slugify, trackEvent } from "../analytics";
 import ConfettiCelebration from "./ConfettiCelebration";
 
 export default function ManeuverDetail({
@@ -33,6 +34,19 @@ export default function ManeuverDetail({
     if (!wasCompleted) {
       setShowConfetti(true);
     }
+
+    const nextStatus = wasCompleted ? "incomplete" : "complete";
+    trackEvent(
+      `maneuver_${nextStatus}_${selectedManeuver.id}_${slugify(
+        selectedManeuver.title
+      )}`,
+      {
+        type: "maneuver",
+        id: selectedManeuver.id,
+        title: selectedManeuver.title,
+        status: nextStatus,
+      }
+    );
   };
 
   const copyUrlToClipboard = async () => {
