@@ -4,8 +4,6 @@ import PWAInstall from "./PWAInstall";
 export default function About({ handleExportData, handleImportData }) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <PWAInstall />
-      
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <h2 className="text-2xl font-bold text-slate-900 mb-4">About</h2>
         <div className="space-y-4 text-slate-700 leading-relaxed">
@@ -26,6 +24,7 @@ export default function About({ handleExportData, handleImportData }) {
           <p>All data is stored locally in your browser's local storage.</p>
         </div>
       </div>
+      <PWAInstall />
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <h3 className="text-lg font-bold text-slate-900 mb-3">How to use</h3>
