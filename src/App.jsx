@@ -18,11 +18,13 @@ function App() {
     Math.floor(Math.random() * tips.length)
   );
   const [completedManeuvers, setCompletedManeuver] = useState(() => {
+    if (typeof window === "undefined") return {};
     const saved = localStorage.getItem("completedManeuvers");
     return saved ? JSON.parse(saved) : {};
   });
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     localStorage.setItem(
       "completedManeuvers",
       JSON.stringify(completedManeuvers)
