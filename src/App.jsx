@@ -280,7 +280,7 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     } else if (view === "maneuvers" && selectedLevel) {
       return `Helicoach | ${selectedLevel.title}`;
     } else {
-      return "Helicoach";
+      return "Helicoach - RC Helicopter Pilot Proficiency Training";
     }
   }, [view, selectedLevel, selectedManeuver]);
 
