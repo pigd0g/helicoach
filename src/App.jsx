@@ -277,11 +277,11 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     if (view === "about") {
       return "Helicoach | About";
     } else if (view === "detail" && selectedManeuver) {
-      return `Helicoach | ${selectedManeuver.title}`;
+      return `Helicoach | ${selectedManeuver.id} - ${selectedManeuver.title}`;
     } else if (view === "maneuvers" && selectedLevel) {
       return `Helicoach | ${selectedLevel.title}`;
     } else {
-      return "Helicoach | Home";
+      return "Helicoach";
     }
   }, [view, selectedLevel, selectedManeuver]);
 
