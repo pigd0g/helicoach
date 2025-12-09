@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { levels, tips } from "./data";
 
 import Header from "./components/Header";
@@ -272,8 +273,28 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     };
   };
 
+  const pageTitle = useMemo(() => {
+    if (view === "about") {
+      return "Helicoach | About";
+    } else if (view === "detail" && selectedManeuver) {
+      return `Helicoach | ${selectedManeuver.id} - ${selectedManeuver.title}`;
+    } else if (view === "maneuvers" && selectedLevel) {
+      return `Helicoach | ${selectedLevel.title}`;
+    } else {
+      return "Helicoach";
+    }
+  }, [view, selectedLevel, selectedManeuver]);
+
+  useEffect(() => {
+    document.title = pageTitle;
+  }, [pageTitle]);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100">
+      <Helmet>
+        <title>{pageTitle}</title>
+      </Helmet>
+
       <Header
         view={view}
         onBack={goBack}
