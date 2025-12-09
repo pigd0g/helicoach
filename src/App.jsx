@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { levels, tips } from "./data";
 
 import Header from "./components/Header";
@@ -291,10 +290,6 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100">
-      <Helmet>
-        <title>{pageTitle}</title>
-      </Helmet>
-
       <Header
         view={view}
         onBack={goBack}
