@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { levels, tips } from "./data";
@@ -273,7 +273,7 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     };
   };
 
-  const getPageTitle = () => {
+  const pageTitle = useMemo(() => {
     if (view === "about") {
       return "Helicoach | About";
     } else if (view === "detail" && selectedManeuver) {
@@ -283,17 +283,16 @@ Please analyze my progress and suggest a training plan for today. Do Not Include
     } else {
       return "Helicoach | Home";
     }
-  };
+  }, [view, selectedLevel, selectedManeuver]);
 
   useEffect(() => {
-    document.title = getPageTitle();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, selectedLevel, selectedManeuver]);
+    document.title = pageTitle;
+  }, [pageTitle]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100">
       <Helmet>
-        <title>{getPageTitle()}</title>
+        <title>{pageTitle}</title>
       </Helmet>
 
       <Header
