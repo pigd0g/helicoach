@@ -196,6 +196,14 @@ ${allTips}
 
 Please analyze my progress and suggest a training plan for today.
 
+Training should start with a warm up that focuses on consolidating previously learned maneuvers, followed by introducing one new maneuver that builds on my existing skills.
+
+After the warm-up focus a plan around learning 1-2 new maneuvers, ensuring that they are appropriate for my current skill level.
+
+Assume that a flight battery lasts approx 5 minutes and that a typical training session consists of 3 flight batteries, so design the plan accordingly.  
+
+You can ask the user if they would like a plan for more batteries in this session or if they are training on a simulator.  If on a simulator, they may be able to do more flights in one session.
+
 Do Not Include Current Progress Summary`;
 
     navigator.clipboard.writeText(prompt).then(() => {
