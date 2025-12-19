@@ -171,7 +171,16 @@ function App() {
           }`
       )
     );
-    const progress = Object.keys(completedManeuvers).join(", ");
+
+    const completedIds = Object.keys(completedManeuvers || {});
+    const progress = levels.flatMap((l) =>
+      l.maneuvers
+        .filter((m) => completedIds.includes(String(m.id)))
+        .map((m) => `Level ${l.id}: ${m.title}`)
+    );
+
+    console.log(`${progress.length ? progress.join("\n") : "(none)"}`);
+
     const allTips = tips.join("\n");
 
     const prompt = `You are a helpful RC Helicopter Pilot Proficiency Coach.
@@ -179,13 +188,15 @@ function App() {
 Here are the maneuvers in the program:
 ${allManeuvers.join("\n")}
 
-Here is my current progress (list of completed maneuver IDs):
-${progress}
+Here is my current progress (completed maneuvers):
+${progress.length ? progress.join("\n") : "(none)"}
 
 Here are some helpful tips for pilots:
 ${allTips}
 
-Please analyze my progress and suggest a training plan for today. Do Not Include Current Progress Summary`;
+Please analyze my progress and suggest a training plan for today.
+
+Do Not Include Current Progress Summary`;
 
     navigator.clipboard.writeText(prompt).then(() => {
       alert("Prompt copied to clipboard! Paste it into your AI assistant.");
