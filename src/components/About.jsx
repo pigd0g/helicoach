@@ -1,4 +1,5 @@
 import React from "react";
+import PWAInstall from "./PWAInstall";
 
 export default function About({ handleExportData, handleImportData }) {
   return (
@@ -23,6 +24,7 @@ export default function About({ handleExportData, handleImportData }) {
           <p>All data is stored locally in your browser's local storage.</p>
         </div>
       </div>
+      <PWAInstall />
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <h3 className="text-lg font-bold text-slate-900 mb-3">How to use</h3>
