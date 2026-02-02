@@ -9,8 +9,8 @@ Purpose: give AI coding agents the essential, actionable knowledge to be product
 Key files to inspect and edit
 
 - `src/data.js` — canonical source of all `levels` and `maneuvers`. When changing content, keep `maneuver.id` values stable (they are used as keys in localStorage and URLs).
-- `src/App.jsx` — central app state, routing behavior, prompt generator (`handleCopyPrompt`), import/export logic and localStorage usage.
-- `src/components/*` — UI pieces; important ones are `LevelsView.jsx`, `ManeuversView.jsx`, `ManeuverDetail.jsx`, `LevelCard.jsx`, `Tips.jsx`, `Header.jsx`.
+- `src/App.jsx` — central app state, routing behavior, prompt generator (`handleCopyPrompt`), import/export logic and localStorage usage. Also manages `helicopters` state.
+- `src/components/*` — UI pieces; important ones are `LevelsView.jsx`, `ManeuversView.jsx`, `ManeuverDetail.jsx`, `LevelCard.jsx`, `Tips.jsx`, `Header.jsx`, `FlightRecordsView.jsx`, `FlightRecordNew.jsx`, `FlightRecordDetail.jsx`, `PreflightChecklist.jsx`.
 - `src/analytics.js` — helper `slugify()` and `trackEvent()`; `trackEvent` is a noop unless `window.gtag` exists.
 - `nginx/default.conf` — production SPA fallback and caching rules. Update if route behavior changes.
 
@@ -21,18 +21,25 @@ Routing & URL conventions (important)
   - `/about` → about view
   - `/level/:id` → maneuvers list for a level
   - `/level/:id/maneuver/:maneuverId` → detail for a maneuver
+  - `/flightrecords` → flight records list view
+  - `/flightrecords/new` → add new helicopter form
+  - `/flightrecords/helicopter/:id` → helicopter detail with stats
+  - `/flightrecords/helicopter/:id/preflight` → preflight checklist
 - App derives view from `location.pathname` in `App.jsx`. Prefer updating `App.jsx` if you add routes.
 
 Data persistence & import/export
 
 - Completed maneuvers are persisted in `localStorage` under the key `completedManeuvers` (an object where keys are maneuver ids and values are true).
+- Helicopters are persisted in `localStorage` under the key `helicopters` (an array of helicopter objects with id, title, photo, flights, avgFlightTime, crashes, lastPreflightDate).
 - Export format (see `handleExportData` in `App.jsx`):
   {
   completedManeuvers: { <id>: true, ... },
+  helicopters: [ { id, title, photo, flights, ... }, ... ],
   exportedAt: "ISO timestamp",
   version: 1
   }
-- Import sanitizes incoming ids against `levels` from `src/data.js`. Follow that pattern when adding other importers.
+- Import sanitizes incoming ids against `levels` from `src/data.js` and validates helicopter objects. Follow that pattern when adding other importers.
+- Photos are stored as base64-encoded JPEG strings (resized to 600x600px using `react-image-file-resizer`).
 
 Video URL handling
 
@@ -47,6 +54,15 @@ Styling & UX patterns
 Analytics & telemetry
 
 - `trackEvent(name, params)` wraps `window.gtag` and is safe to call in DEV (it logs debug when `import.meta.env.DEV`). Use `analytics.slugify()` for consistent names.
+- Track events for: maneuver completion, level completion, helicopter added, preflight check completed.
+
+Flight Records feature
+
+- Helicopter tracking system with photo capture, flight stats, and preflight checklists.
+- Photo capture uses two separate inputs (camera and gallery) for Android compatibility — see `FlightRecordNew.jsx`.
+- Helicopter stats: flights (with +1 quick action), average flight time, estimated hours (calculated as dd:hh:mm), crashes (with +1 quick action).
+- Preflight checklist has 22 items across 6 sections. Completion date is saved and highlighted red if >7 days old.
+- All helicopter CRUD operations in `App.jsx` with localStorage sync.
 
 Developer workflows
 

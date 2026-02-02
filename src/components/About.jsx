@@ -40,11 +40,11 @@ export default function About({ handleExportData, handleImportData }) {
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <h3 className="text-lg font-bold text-slate-900 mb-3">
-          Transfer Progress
+          Transfer Settings
         </h3>
         <p className="text-slate-700 mb-4">
-          Export your progress to transfer to another device, or import a
-          previously exported file.
+          Export your progress and settings to transfer to another device, or
+          import a previously exported file.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <button
@@ -66,7 +66,7 @@ export default function About({ handleExportData, handleImportData }) {
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            Export Progress
+            Export Settings
           </button>
           <label className="flex-1 py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer">
             <svg
@@ -84,7 +84,7 @@ export default function About({ handleExportData, handleImportData }) {
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            Import Progress
+            Import Settings
             <input
               type="file"
               accept=".json"

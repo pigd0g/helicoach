@@ -7,6 +7,10 @@ import About from "./components/About";
 import LevelsView from "./components/LevelsView";
 import ManeuversView from "./components/ManeuversView";
 import ManeuverDetail from "./components/ManeuverDetail";
+import FlightRecordsView from "./components/FlightRecordsView";
+import FlightRecordNew from "./components/FlightRecordNew";
+import FlightRecordDetail from "./components/FlightRecordDetail";
+import PreflightChecklist from "./components/PreflightChecklist";
 
 function App() {
   const [view, setView] = useState("levels");
@@ -15,19 +19,30 @@ function App() {
   const [showVideoMove, setShowVideoMove] = useState(false);
   const [selectedManeuver, setSelectedManeuver] = useState(null);
   const [currentTipIndex, setCurrentTipIndex] = useState(() =>
-    Math.floor(Math.random() * tips.length)
+    Math.floor(Math.random() * tips.length),
   );
   const [completedManeuvers, setCompletedManeuver] = useState(() => {
     const saved = localStorage.getItem("completedManeuvers");
     return saved ? JSON.parse(saved) : {};
   });
 
+  const [helicopters, setHelicopters] = useState(() => {
+    const saved = localStorage.getItem("helicopters");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [selectedHelicopter, setSelectedHelicopter] = useState(null);
+
   useEffect(() => {
     localStorage.setItem(
       "completedManeuvers",
-      JSON.stringify(completedManeuvers)
+      JSON.stringify(completedManeuvers),
     );
   }, [completedManeuvers]);
+
+  useEffect(() => {
+    localStorage.setItem("helicopters", JSON.stringify(helicopters));
+  }, [helicopters]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,6 +62,52 @@ function App() {
 
       if (parts[0] === "about") {
         setView("about");
+        return;
+      }
+
+      if (parts[0] === "flightrecords") {
+        if (parts.length === 1) {
+          setView("flightrecords");
+          setSelectedHelicopter(null);
+          return;
+        }
+
+        if (parts.length === 2 && parts[1] === "new") {
+          setView("flightrecordnew");
+          setSelectedHelicopter(null);
+          return;
+        }
+
+        if (parts.length === 3 && parts[1] === "helicopter") {
+          const helicopterId = parts[2];
+          const helicopter = helicopters.find((h) => h.id === helicopterId);
+          if (helicopter) {
+            setSelectedHelicopter(helicopter);
+            setView("flightrecorddetail");
+            return;
+          }
+          setView("flightrecords");
+          return;
+        }
+
+        if (
+          parts.length === 4 &&
+          parts[1] === "helicopter" &&
+          parts[3] === "preflight"
+        ) {
+          const helicopterId = parts[2];
+          const helicopter = helicopters.find((h) => h.id === helicopterId);
+          if (helicopter) {
+            setSelectedHelicopter(helicopter);
+            setView("preflight");
+            return;
+          }
+          setView("flightrecords");
+          return;
+        }
+
+        setView("flightrecords");
+        setSelectedHelicopter(null);
         return;
       }
 
@@ -70,7 +131,7 @@ function App() {
         if (parts.length === 4 && parts[2] === "maneuver") {
           const maneuverIdParam = parts[3];
           const maneuver = level.maneuvers.find(
-            (m) => String(m.id) === String(maneuverIdParam)
+            (m) => String(m.id) === String(maneuverIdParam),
           );
           if (maneuver) {
             setSelectedManeuver(maneuver);
@@ -121,6 +182,38 @@ function App() {
     });
   };
 
+  const addHelicopter = (helicopter) => {
+    const newHelicopter = {
+      ...helicopter,
+      id: crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random()}`,
+      flights: 0,
+      avgFlightTime: 0,
+      crashes: 0,
+      lastPreflightDate: null,
+      createdAt: new Date().toISOString(),
+    };
+    setHelicopters((prev) => [...prev, newHelicopter]);
+    return newHelicopter;
+  };
+
+  const updateHelicopter = (id, updates) => {
+    setHelicopters((prev) =>
+      prev.map((h) => (h.id === id ? { ...h, ...updates } : h)),
+    );
+  };
+
+  const deleteHelicopter = (id) => {
+    setHelicopters((prev) => prev.filter((h) => h.id !== id));
+  };
+
+  const completePreflightCheck = (helicopterId) => {
+    updateHelicopter(helicopterId, {
+      lastPreflightDate: new Date().toISOString(),
+    });
+  };
+
   const handleLevelClick = (level) => {
     navigate(`/level/${level.id}`);
     window.scrollTo(0, 0);
@@ -141,7 +234,7 @@ function App() {
   const handleRandomManeuver = () => {
     const allManeuvers = levels.flatMap((l) => l.maneuvers);
     const incompleteManeuvers = allManeuvers.filter(
-      (m) => !completedManeuvers[m.id]
+      (m) => !completedManeuvers[m.id],
     );
 
     if (incompleteManeuvers.length > 0) {
@@ -150,7 +243,7 @@ function App() {
           Math.floor(Math.random() * incompleteManeuvers.length)
         ];
       const level = levels.find((l) =>
-        l.maneuvers.some((m) => m.id === randomManeuver.id)
+        l.maneuvers.some((m) => m.id === randomManeuver.id),
       );
       setSelectedLevel(level);
       setShowVideo(false);
@@ -168,15 +261,15 @@ function App() {
         (m) =>
           `Level ${l.id}: ${m.title}${
             m.variations === "N/A" ? "" : " - " + m.variations
-          }`
-      )
+          }`,
+      ),
     );
 
     const completedIds = Object.keys(completedManeuvers || {});
     const progress = levels.flatMap((l) =>
       l.maneuvers
         .filter((m) => completedIds.includes(String(m.id)))
-        .map((m) => `Level ${l.id}: ${m.title}`)
+        .map((m) => `Level ${l.id}: ${m.title}`),
     );
 
     console.log(`${progress.length ? progress.join("\n") : "(none)"}`);
@@ -214,6 +307,10 @@ Do Not Include Current Progress Summary`;
   const goBack = () => {
     if (view === "detail" && selectedLevel) {
       navigate(`/level/${selectedLevel.id}`);
+    } else if (view === "flightrecorddetail" || view === "preflight") {
+      navigate(`/flightrecords`);
+    } else if (view === "flightrecordnew") {
+      navigate(`/flightrecords`);
     } else {
       navigate(`/`);
     }
@@ -222,6 +319,7 @@ Do Not Include Current Progress Summary`;
   const handleExportData = () => {
     const data = {
       completedManeuvers,
+      helicopters,
       exportedAt: new Date().toISOString(),
       version: 1,
     };
@@ -248,12 +346,15 @@ Do Not Include Current Progress Summary`;
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target?.result);
+        let hasValidData = false;
+
+        // Import completed maneuvers
         if (
           data.completedManeuvers &&
           typeof data.completedManeuvers === "object"
         ) {
           const validManeuverIds = new Set(
-            levels.flatMap((l) => l.maneuvers.map((m) => m.id))
+            levels.flatMap((l) => l.maneuvers.map((m) => m.id)),
           );
           const sanitized = {};
           for (const [key, value] of Object.entries(data.completedManeuvers)) {
@@ -262,10 +363,28 @@ Do Not Include Current Progress Summary`;
             }
           }
           setCompletedManeuver(sanitized);
+          hasValidData = true;
+        }
+
+        // Import helicopters
+        if (data.helicopters && Array.isArray(data.helicopters)) {
+          const sanitizedHelicopters = data.helicopters.filter(
+            (h) =>
+              h &&
+              typeof h === "object" &&
+              h.id &&
+              h.title &&
+              typeof h.title === "string",
+          );
+          setHelicopters(sanitizedHelicopters);
+          hasValidData = true;
+        }
+
+        if (hasValidData) {
           alert("Progress imported successfully!");
         } else {
           alert(
-            "Invalid file format. Please select a valid HeliCoach export file."
+            "Invalid file format. Please select a valid HeliCoach export file.",
           );
         }
       } catch {
@@ -283,7 +402,7 @@ Do Not Include Current Progress Summary`;
   const getLevelProgress = (level) => {
     const total = level.maneuvers.length;
     const completed = level.maneuvers.filter(
-      (m) => completedManeuvers[m.id]
+      (m) => completedManeuvers[m.id],
     ).length;
     return {
       total,
@@ -299,10 +418,18 @@ Do Not Include Current Progress Summary`;
       return `Helicoach | ${selectedManeuver.id} - ${selectedManeuver.title}`;
     } else if (view === "maneuvers" && selectedLevel) {
       return `Helicoach | ${selectedLevel.title}`;
+    } else if (view === "flightrecords") {
+      return "Helicoach | Flight Records";
+    } else if (view === "flightrecordnew") {
+      return "Helicoach | Add New Helicopter";
+    } else if (view === "flightrecorddetail" && selectedHelicopter) {
+      return `Helicoach | ${selectedHelicopter.title}`;
+    } else if (view === "preflight" && selectedHelicopter) {
+      return `Helicoach | Preflight Check - ${selectedHelicopter.title}`;
     } else {
       return "Helicoach - RC Helicopter Pilot Proficiency Training";
     }
-  }, [view, selectedLevel, selectedManeuver]);
+  }, [view, selectedLevel, selectedManeuver, selectedHelicopter]);
 
   useEffect(() => {
     document.title = pageTitle;
@@ -315,6 +442,10 @@ Do Not Include Current Progress Summary`;
         onBack={goBack}
         onAbout={() => {
           navigate("/about");
+          window.scrollTo(0, 0);
+        }}
+        onFlightRecords={() => {
+          navigate("/flightrecords");
           window.scrollTo(0, 0);
         }}
       />
@@ -359,6 +490,58 @@ Do Not Include Current Progress Summary`;
             toggleCompletion={toggleCompletion}
             showVideo={showVideo}
             setShowVideo={setShowVideo}
+          />
+        )}
+
+        {view === "flightrecords" && (
+          <FlightRecordsView
+            helicopters={helicopters}
+            onAddNew={() => navigate("/flightrecords/new")}
+            onSelectHelicopter={(helicopter) =>
+              navigate(`/flightrecords/helicopter/${helicopter.id}`)
+            }
+            onDeleteHelicopter={deleteHelicopter}
+          />
+        )}
+
+        {view === "flightrecordnew" && (
+          <FlightRecordNew
+            onSave={(helicopter) => {
+              const newHeli = addHelicopter(helicopter);
+              navigate("/flightrecords");
+            }}
+            onCancel={() => navigate("/flightrecords")}
+          />
+        )}
+
+        {view === "flightrecorddetail" && selectedHelicopter && (
+          <FlightRecordDetail
+            helicopter={selectedHelicopter}
+            onUpdate={(updates) =>
+              updateHelicopter(selectedHelicopter.id, updates)
+            }
+            onDelete={() => {
+              deleteHelicopter(selectedHelicopter.id);
+              navigate("/flightrecords");
+            }}
+            onPreflight={() =>
+              navigate(
+                `/flightrecords/helicopter/${selectedHelicopter.id}/preflight`,
+              )
+            }
+          />
+        )}
+
+        {view === "preflight" && selectedHelicopter && (
+          <PreflightChecklist
+            helicopter={selectedHelicopter}
+            onComplete={() => {
+              completePreflightCheck(selectedHelicopter.id);
+              navigate(`/flightrecords/helicopter/${selectedHelicopter.id}`);
+            }}
+            onCancel={() =>
+              navigate(`/flightrecords/helicopter/${selectedHelicopter.id}`)
+            }
           />
         )}
       </main>
