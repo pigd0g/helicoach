@@ -40,7 +40,7 @@ export default function FlightRecordDetail({
   };
 
   const calculateCrashRate = () => {
-    if (!flights || flights === 0) return "0.00";
+    if (!flights) return "0.00";
     const rate = ((crashes || 0) / flights) * 100;
     return rate.toFixed(2);
   };
