@@ -40,8 +40,9 @@ export default function FlightRecordDetail({
   };
 
   const calculateCrashRate = () => {
-    if (flights === 0) return "0.00";
-    return ((crashes / flights) * 100).toFixed(2);
+    if (!flights || flights === 0) return "0.00";
+    const rate = ((crashes || 0) / flights) * 100;
+    return rate.toFixed(2);
   };
 
   const isPreflightOverdue = () => {
