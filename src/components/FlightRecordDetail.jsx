@@ -119,7 +119,7 @@ export default function FlightRecordDetail({
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+              className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1 cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -166,7 +166,7 @@ export default function FlightRecordDetail({
                   setFlights(newFlights);
                   onUpdate({ flights: newFlights });
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -242,7 +242,7 @@ export default function FlightRecordDetail({
                   setCrashes(newCrashes);
                   onUpdate({ crashes: newCrashes });
                 }}
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -276,13 +276,13 @@ export default function FlightRecordDetail({
           <div className="flex gap-3 pt-2">
             <button
               onClick={handleCancel}
-              className="flex-1 py-2 px-4 border border-slate-200 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+              className="flex-1 py-2 px-4 border border-slate-200 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer"
             >
               Save Changes
             </button>
@@ -327,7 +327,7 @@ export default function FlightRecordDetail({
 
         <button
           onClick={onPreflight}
-          className="w-full py-3 px-6 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 px-6 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors flex items-center justify-center gap-2 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -350,7 +350,7 @@ export default function FlightRecordDetail({
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <button
           onClick={handleDelete}
-          className="w-full py-3 px-6 bg-red-50 text-red-600 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 px-6 bg-red-50 text-red-600 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center justify-center gap-2 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

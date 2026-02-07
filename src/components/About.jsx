@@ -49,7 +49,7 @@ export default function About({ handleExportData, handleImportData }) {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleExportData}
-            className="flex-1 py-2 px-4 rounded-lg bg-slate-900 text-white hover:bg-slate-800 font-medium flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 py-2 px-4 rounded-lg bg-slate-900 text-white hover:bg-slate-800 font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +101,7 @@ export default function About({ handleExportData, handleImportData }) {
           <li>
             Source available on{" "}
             <a
-              className="link underline"
+              className="link underline cursor-pointer"
               href="https://github.com/pigd0g/helicoach"
               target="_blank"
               rel="noopener noreferrer"

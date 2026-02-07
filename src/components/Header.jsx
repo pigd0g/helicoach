@@ -6,7 +6,7 @@ export default function Header({ view, onBack, onAbout, onFlightRecords }) {
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-center relative">
         {view !== "levels" && (
           <button
-            className="absolute left-4 p-2 -ml-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20"
+            className="absolute left-4 p-2 -ml-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 cursor-pointer"
             onClick={onBack}
             aria-label="Go back"
           >
@@ -25,7 +25,7 @@ export default function Header({ view, onBack, onAbout, onFlightRecords }) {
             </svg>
           </button>
         )}
-        <a className="flex items-center justify-center1" href="/">
+        <a className="flex items-center justify-center1 cursor-pointer" href="/">
           <img src="/logow.png" alt="HeliCoach Logo" className="h-8 w-8 mr-2" />
           <h1 className="text-lg font-bold tracking-wide">HeliCoach</h1>
         </a>
@@ -35,7 +35,7 @@ export default function Header({ view, onBack, onAbout, onFlightRecords }) {
             view !== "flightrecorddetail" &&
             view !== "preflight" && (
               <button
-                className="p-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20"
+                className="p-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 cursor-pointer"
                 onClick={onFlightRecords}
                 aria-label="Flight Records"
               >
@@ -52,7 +52,7 @@ export default function Header({ view, onBack, onAbout, onFlightRecords }) {
             )}
           {view !== "about" && (
             <button
-              className="p-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20"
+              className="p-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 cursor-pointer"
               onClick={onAbout}
               aria-label="About"
             >
