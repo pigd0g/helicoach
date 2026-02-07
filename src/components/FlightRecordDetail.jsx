@@ -39,6 +39,11 @@ export default function FlightRecordDetail({
       .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
   };
 
+  const calculateCrashRate = () => {
+    if (flights === 0) return "0.00";
+    return ((crashes / flights) * 100).toFixed(2);
+  };
+
   const isPreflightOverdue = () => {
     if (!helicopter.lastPreflightDate) return false;
     const lastCheck = new Date(helicopter.lastPreflightDate);
@@ -254,6 +259,15 @@ export default function FlightRecordDetail({
                 +1
               </button>
             )}
+          </div>
+
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
+            <p className="text-sm font-medium text-slate-600 mb-1">
+              Crash Rate
+            </p>
+            <p className="text-2xl font-bold text-slate-900">
+              {calculateCrashRate()}%
+            </p>
           </div>
         </div>
 
