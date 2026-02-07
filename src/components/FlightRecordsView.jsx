@@ -17,7 +17,7 @@ export default function FlightRecordsView({
 
       <button
         onClick={onAddNew}
-        className="w-full py-4 px-6 bg-green-600 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-green-700 transition-colors shadow-sm"
+        className="w-full py-4 px-6 bg-green-600 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-green-700 transition-colors shadow-sm cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

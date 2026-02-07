@@ -30,7 +30,7 @@ export default function Tips({ tips, currentIndex, onPrev, onNext }) {
       <div className="flex justify-between gap-4">
         <button
           onClick={onPrev}
-          className="flex-1 py-2 px-4 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium flex items-center justify-center gap-2 transition-colors"
+          className="flex-1 py-2 px-4 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@ export default function Tips({ tips, currentIndex, onPrev, onNext }) {
         </button>
         <button
           onClick={onNext}
-          className="flex-1 py-2 px-4 rounded-lg bg-slate-900 text-white hover:bg-slate-800 font-medium flex items-center justify-center gap-2 transition-colors"
+          className="flex-1 py-2 px-4 rounded-lg bg-slate-900 text-white hover:bg-slate-800 font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
         >
           Next
           <svg

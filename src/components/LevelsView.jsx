@@ -25,7 +25,7 @@ export default function LevelsView({
       </p>
       <p className="text-center text-xs text-gray-500">
         🎁 Checkout the new flight records and preflight checklist{" "}
-        <a className="text-blue-600 underline" href="/flightrecords">
+        <a className="text-blue-600 underline cursor-pointer" href="/flightrecords">
           here
         </a>
         .
@@ -40,7 +40,7 @@ export default function LevelsView({
         </p>
         <button
           onClick={handleCopyPrompt}
-          className="bg-white text-blue-700 font-bold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-50 active:bg-blue-100 transition-colors w-full sm:w-auto flex items-center justify-center gap-2"
+          className="bg-white text-blue-700 font-bold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-50 active:bg-blue-100 transition-colors w-full sm:w-auto flex items-center justify-center gap-2 cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
