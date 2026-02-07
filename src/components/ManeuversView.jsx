@@ -83,7 +83,7 @@ export default function ManeuversView({
         <div className="space-y-4">
           <button
             onClick={() => setShowVideo(!showVideo)}
-            className="w-full py-3 px-4 bg-white border border-slate-200 rounded-xl text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+            className="w-full py-3 px-4 bg-white border border-slate-200 rounded-xl text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +193,7 @@ export default function ManeuversView({
       <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center z-40">
         <button
           onClick={handleToggleLevelCompletion}
-          className={`max-w-md w-full shadow-xl rounded-full py-4 px-6 font-bold text-lg flex items-center justify-center gap-3 transition-all transform active:scale-95 ${
+          className={`max-w-md w-full shadow-xl rounded-full py-4 px-6 font-bold text-lg flex items-center justify-center gap-3 transition-all transform active:scale-95 cursor-pointer ${
             getLevelProgress(selectedLevel).percentage === 100
               ? "bg-white text-slate-700 border-2 border-slate-200 hover:bg-slate-50"
               : "bg-green-600 text-white hover:bg-green-700"

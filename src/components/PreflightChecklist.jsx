@@ -198,7 +198,7 @@ export default function PreflightChecklist({
         <div className="max-w-3xl w-full flex flex-col sm:flex-row gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-3 px-6 bg-white border-2 border-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-50 transition-colors shadow-xl"
+            className="flex-1 py-3 px-6 bg-white border-2 border-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-50 transition-colors shadow-xl cursor-pointer"
           >
             Cancel
           </button>
@@ -207,7 +207,7 @@ export default function PreflightChecklist({
             disabled={!isComplete()}
             className={`flex-1 py-3 px-6 rounded-full font-bold transition-all shadow-xl flex items-center justify-center gap-2 ${
               isComplete()
-                ? "bg-green-600 text-white hover:bg-green-700"
+                ? "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
                 : "bg-slate-200 text-slate-400 cursor-not-allowed"
             }`}
           >
