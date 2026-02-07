@@ -120,7 +120,7 @@ export default function FlightRecordNew({ onSave, onCancel }) {
                     type="button"
                     onClick={() => cameraInputRef.current?.click()}
                     disabled={isProcessing}
-                    className="aspect-video bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center hover:bg-slate-100 hover:border-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="aspect-video bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center hover:bg-slate-100 hover:border-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer"
                   >
                     {isProcessing ? (
                       <>
@@ -177,7 +177,7 @@ export default function FlightRecordNew({ onSave, onCancel }) {
                     type="button"
                     onClick={() => galleryInputRef.current?.click()}
                     disabled={isProcessing}
-                    className="aspect-video bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center hover:bg-slate-100 hover:border-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="aspect-video bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center hover:bg-slate-100 hover:border-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer"
                   >
                     {isProcessing ? (
                       <>
@@ -275,7 +275,7 @@ export default function FlightRecordNew({ onSave, onCancel }) {
           <button
             type="submit"
             disabled={isProcessing}
-            className="flex-1 py-3 px-6 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="flex-1 py-3 px-6 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer"
           >
             Save Helicopter
           </button>
