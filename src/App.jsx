@@ -13,11 +13,6 @@ import FlightRecordDetail from "./components/FlightRecordDetail";
 import PreflightChecklist from "./components/PreflightChecklist";
 
 function App() {
-  const [view, setView] = useState("levels");
-  const [selectedLevel, setSelectedLevel] = useState(null);
-  const [showVideo, setShowVideo] = useState(false);
-  const [showVideoMove, setShowVideoMove] = useState(false);
-  const [selectedManeuver, setSelectedManeuver] = useState(null);
   const [currentTipIndex, setCurrentTipIndex] = useState(() =>
     Math.floor(Math.random() * tips.length),
   );
@@ -30,8 +25,6 @@ function App() {
     const saved = localStorage.getItem("helicopters");
     return saved ? JSON.parse(saved) : [];
   });
-
-  const [selectedHelicopter, setSelectedHelicopter] = useState(null);
 
   useEffect(() => {
     localStorage.setItem(
@@ -47,113 +40,94 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    try {
-      const raw = location.pathname || "/";
-      const path = raw.replace(/\/+$/g, "") || "/";
-      const parts = path === "/" ? [] : path.split("/").filter(Boolean);
+  const { view, selectedLevel, selectedManeuver, selectedHelicopter } =
+    useMemo(() => {
+      const defaultState = {
+        view: "levels",
+        selectedLevel: null,
+        selectedManeuver: null,
+        selectedHelicopter: null,
+      };
+      try {
+        const raw = location.pathname || "/";
+        const path = raw.replace(/\/+$/g, "") || "/";
+        const parts = path === "/" ? [] : path.split("/").filter(Boolean);
 
-      if (path === "/" || parts.length === 0) {
-        setView("levels");
-        setSelectedLevel(null);
-        setSelectedManeuver(null);
-        return;
-      }
+        if (path === "/" || parts.length === 0) return defaultState;
 
-      if (parts[0] === "about") {
-        setView("about");
-        return;
-      }
+        if (parts[0] === "about") return { ...defaultState, view: "about" };
 
-      if (parts[0] === "flightrecords") {
-        if (parts.length === 1) {
-          setView("flightrecords");
-          setSelectedHelicopter(null);
-          return;
-        }
+        if (parts[0] === "flightrecords") {
+          if (parts.length === 1)
+            return { ...defaultState, view: "flightrecords" };
 
-        if (parts.length === 2 && parts[1] === "new") {
-          setView("flightrecordnew");
-          setSelectedHelicopter(null);
-          return;
-        }
+          if (parts.length === 2 && parts[1] === "new")
+            return { ...defaultState, view: "flightrecordnew" };
 
-        if (parts.length === 3 && parts[1] === "helicopter") {
-          const helicopterId = parts[2];
-          const helicopter = helicopters.find((h) => h.id === helicopterId);
-          if (helicopter) {
-            setSelectedHelicopter(helicopter);
-            setView("flightrecorddetail");
-            return;
+          if (parts.length === 3 && parts[1] === "helicopter") {
+            const helicopter = helicopters.find((h) => h.id === parts[2]);
+            if (helicopter)
+              return {
+                ...defaultState,
+                view: "flightrecorddetail",
+                selectedHelicopter: helicopter,
+              };
+            return { ...defaultState, view: "flightrecords" };
           }
-          setView("flightrecords");
-          return;
-        }
 
-        if (
-          parts.length === 4 &&
-          parts[1] === "helicopter" &&
-          parts[3] === "preflight"
-        ) {
-          const helicopterId = parts[2];
-          const helicopter = helicopters.find((h) => h.id === helicopterId);
-          if (helicopter) {
-            setSelectedHelicopter(helicopter);
-            setView("preflight");
-            return;
+          if (
+            parts.length === 4 &&
+            parts[1] === "helicopter" &&
+            parts[3] === "preflight"
+          ) {
+            const helicopter = helicopters.find((h) => h.id === parts[2]);
+            if (helicopter)
+              return {
+                ...defaultState,
+                view: "preflight",
+                selectedHelicopter: helicopter,
+              };
+            return { ...defaultState, view: "flightrecords" };
           }
-          setView("flightrecords");
-          return;
+
+          return { ...defaultState, view: "flightrecords" };
         }
 
-        setView("flightrecords");
-        setSelectedHelicopter(null);
-        return;
-      }
-
-      if (parts[0] === "level") {
-        const levelIdParam = parts[1];
-        const level = levels.find((l) => String(l.id) === String(levelIdParam));
-        if (!level) {
-          setView("levels");
-          setSelectedLevel(null);
-          setSelectedManeuver(null);
-          return;
-        }
-        setSelectedLevel(level);
-
-        if (parts.length === 2) {
-          setView("maneuvers");
-          setSelectedManeuver(null);
-          return;
-        }
-
-        if (parts.length === 4 && parts[2] === "maneuver") {
-          const maneuverIdParam = parts[3];
-          const maneuver = level.maneuvers.find(
-            (m) => String(m.id) === String(maneuverIdParam),
+        if (parts[0] === "level") {
+          const level = levels.find(
+            (l) => String(l.id) === String(parts[1]),
           );
-          if (maneuver) {
-            setSelectedManeuver(maneuver);
-            setView("detail");
-            return;
+          if (!level) return defaultState;
+
+          if (parts.length === 2)
+            return { ...defaultState, view: "maneuvers", selectedLevel: level };
+
+          if (parts.length === 4 && parts[2] === "maneuver") {
+            const maneuver = level.maneuvers.find(
+              (m) => String(m.id) === String(parts[3]),
+            );
+            if (maneuver)
+              return {
+                ...defaultState,
+                view: "detail",
+                selectedLevel: level,
+                selectedManeuver: maneuver,
+              };
+            return {
+              ...defaultState,
+              view: "maneuvers",
+              selectedLevel: level,
+            };
           }
+
+          return { ...defaultState, view: "maneuvers", selectedLevel: level };
         }
 
-        setView("maneuvers");
-        setSelectedManeuver(null);
-        return;
+        return defaultState;
+      } catch {
+        return defaultState;
       }
-
-      setView("levels");
-      setSelectedLevel(null);
-      setSelectedManeuver(null);
-    } catch (e) {
-      setView("levels");
-      setSelectedLevel(null);
-      setSelectedManeuver(null);
-    }
-  }, [location.pathname]);
+    }, [location.pathname, helicopters]);
 
   const toggleCompletion = (maneuverId) => {
     setCompletedManeuver((prev) => {
@@ -229,30 +203,6 @@ function App() {
       navigate(`/`);
     }
     window.scrollTo(0, 0);
-  };
-
-  const handleRandomManeuver = () => {
-    const allManeuvers = levels.flatMap((l) => l.maneuvers);
-    const incompleteManeuvers = allManeuvers.filter(
-      (m) => !completedManeuvers[m.id],
-    );
-
-    if (incompleteManeuvers.length > 0) {
-      const randomManeuver =
-        incompleteManeuvers[
-          Math.floor(Math.random() * incompleteManeuvers.length)
-        ];
-      const level = levels.find((l) =>
-        l.maneuvers.some((m) => m.id === randomManeuver.id),
-      );
-      setSelectedLevel(level);
-      setShowVideo(false);
-      setSelectedManeuver(randomManeuver);
-      setView("detail");
-      window.scrollTo(0, 0);
-    } else {
-      alert("Congratulations! You've completed all maneuvers!");
-    }
   };
 
   const handleCopyPrompt = () => {
@@ -473,10 +423,9 @@ Do Not Include Current Progress Summary`;
 
         {view === "maneuvers" && selectedLevel && (
           <ManeuversView
+            key={selectedLevel.id}
             selectedLevel={selectedLevel}
             getLevelProgress={getLevelProgress}
-            showVideo={showVideoMove}
-            setShowVideo={setShowVideoMove}
             completedManeuvers={completedManeuvers}
             handleManeuverClick={handleManeuverClick}
             toggleLevelCompletion={toggleLevelCompletion}
@@ -485,11 +434,10 @@ Do Not Include Current Progress Summary`;
 
         {view === "detail" && selectedManeuver && (
           <ManeuverDetail
+            key={selectedManeuver.id}
             selectedManeuver={selectedManeuver}
             completedManeuvers={completedManeuvers}
             toggleCompletion={toggleCompletion}
-            showVideo={showVideo}
-            setShowVideo={setShowVideo}
           />
         )}
 
@@ -500,14 +448,13 @@ Do Not Include Current Progress Summary`;
             onSelectHelicopter={(helicopter) =>
               navigate(`/flightrecords/helicopter/${helicopter.id}`)
             }
-            onDeleteHelicopter={deleteHelicopter}
           />
         )}
 
         {view === "flightrecordnew" && (
           <FlightRecordNew
             onSave={(helicopter) => {
-              const newHeli = addHelicopter(helicopter);
+              addHelicopter(helicopter);
               navigate("/flightrecords");
             }}
             onCancel={() => navigate("/flightrecords")}

@@ -6,13 +6,10 @@ export default function ManeuverDetail({
   selectedManeuver,
   completedManeuvers,
   toggleCompletion,
-  showVideo,
-  setShowVideo,
 }) {
-  if (!selectedManeuver) return null;
-
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     if (!copied) return;
@@ -25,6 +22,8 @@ export default function ManeuverDetail({
     const timer = setTimeout(() => setShowConfetti(false), 3000);
     return () => clearTimeout(timer);
   }, [showConfetti]);
+
+  if (!selectedManeuver) return null;
 
   const handleToggleCompletion = () => {
     const wasCompleted = completedManeuvers[selectedManeuver.id];

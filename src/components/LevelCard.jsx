@@ -5,7 +5,7 @@ export default function LevelCard({ level, progress, onClick }) {
   return (
     <div
       onClick={() => onClick(level)}
-      className={`bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-all cursor-pointer active:scale-[0.98] duration-200 group relative overflow-hidden ${"border-slate-200 hover:border-blue-200"}`}
+      className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-all cursor-pointer active:scale-[0.98] duration-200 group relative overflow-hidden border-slate-200 hover:border-blue-200"
     >
       <div className="flex justify-between items-start mb-2 relative z-10">
         <span

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 export default function FlightRecordDetail({
   helicopter,
@@ -45,42 +45,34 @@ export default function FlightRecordDetail({
     return rate.toFixed(2);
   };
 
-  const isPreflightOverdue = () => {
-    if (!helicopter.lastPreflightDate) return false;
+  const [daysSinceCheck] = useState(() => {
+    if (!helicopter.lastPreflightDate) return null;
     const lastCheck = new Date(helicopter.lastPreflightDate);
-    const daysSinceCheck = Math.floor(
+    return Math.floor(
       (Date.now() - lastCheck.getTime()) / (1000 * 60 * 60 * 24),
     );
-    return daysSinceCheck > 7;
-  };
+  });
 
-  const getPreflightStatus = () => {
-    if (!helicopter.lastPreflightDate) {
+  const isPreflightOverdue = daysSinceCheck !== null && daysSinceCheck > 7;
+
+  const preflightStatus = useMemo(() => {
+    if (daysSinceCheck === null) {
       return { text: "Never checked", color: "text-slate-500" };
     }
-    const lastCheck = new Date(helicopter.lastPreflightDate);
-    const daysSinceCheck = Math.floor(
-      (Date.now() - lastCheck.getTime()) / (1000 * 60 * 60 * 24),
-    );
-
     if (daysSinceCheck > 7) {
       return {
         text: `${daysSinceCheck} days ago - Overdue!`,
         color: "text-red-600",
       };
     }
-
     if (daysSinceCheck === 0) {
       return { text: "Today", color: "text-green-600" };
     }
-
     return {
       text: `${daysSinceCheck} day${daysSinceCheck !== 1 ? "s" : ""} ago`,
       color: "text-green-600",
     };
-  };
-
-  const preflightStatus = getPreflightStatus();
+  }, [daysSinceCheck]);
 
   const handleDelete = () => {
     if (
@@ -305,7 +297,7 @@ export default function FlightRecordDetail({
               </p>
             )}
           </div>
-          {isPreflightOverdue() && (
+          {isPreflightOverdue && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="32"

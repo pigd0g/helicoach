@@ -4,7 +4,6 @@ export default function FlightRecordsView({
   helicopters,
   onAddNew,
   onSelectHelicopter,
-  onDeleteHelicopter,
 }) {
   return (
     <div className="space-y-6">

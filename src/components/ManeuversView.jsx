@@ -5,13 +5,12 @@ import ConfettiCelebration from "./ConfettiCelebration";
 export default function ManeuversView({
   selectedLevel,
   getLevelProgress,
-  showVideo,
-  setShowVideo,
   completedManeuvers,
   handleManeuverClick,
   toggleLevelCompletion,
 }) {
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     if (!showConfetti) return;
