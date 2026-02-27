@@ -1,20 +1,6 @@
 import React, { useState, useRef } from "react";
-import Resizer from "react-image-file-resizer";
 import { slugify, trackEvent } from "../analytics";
-
-const resizeFile = (file) =>
-  new Promise((resolve) => {
-    Resizer.imageFileResizer(
-      file,
-      600,
-      600,
-      "JPEG",
-      100,
-      0,
-      (uri) => resolve(uri),
-      "base64",
-    );
-  });
+import { resizeFile } from "../imageUtils";
 
 export default function FlightRecordNew({ onSave, onCancel }) {
   const [title, setTitle] = useState("");

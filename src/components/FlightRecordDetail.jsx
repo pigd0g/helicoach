@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { resizeFile } from "../imageUtils";
 
 export default function FlightRecordDetail({
   helicopter,
@@ -12,6 +13,25 @@ export default function FlightRecordDetail({
     helicopter.avgFlightTime || 0,
   );
   const [crashes, setCrashes] = useState(helicopter.crashes || 0);
+  const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
+  const photoCameraInputRef = useRef(null);
+  const photoGalleryInputRef = useRef(null);
+
+  const handlePhotoCapture = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsProcessingPhoto(true);
+    try {
+      const resizedImage = await resizeFile(file);
+      onUpdate({ photo: resizedImage });
+    } catch (error) {
+      console.error("Error resizing image:", error);
+      alert("Failed to process image. Please try again.");
+    } finally {
+      setIsProcessingPhoto(false);
+      e.target.value = "";
+    }
+  };
 
   const handleSave = () => {
     onUpdate({
@@ -101,15 +121,117 @@ export default function FlightRecordDetail({
         </p>
       </div>
 
-      {helicopter.photo && (
+      {helicopter.photo ? (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <img
             src={helicopter.photo}
             alt={helicopter.title}
             className="w-full aspect-video object-cover"
           />
+          <div className="flex gap-3 p-3 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => photoCameraInputRef.current?.click()}
+              disabled={isProcessingPhoto}
+              className="flex-1 py-2 px-3 text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-1 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isProcessingPhoto ? (
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                  <circle cx="12" cy="13" r="3" />
+                </svg>
+              )}
+              Take Photo
+            </button>
+            <button
+              type="button"
+              onClick={() => photoGalleryInputRef.current?.click()}
+              disabled={isProcessingPhoto}
+              className="flex-1 py-2 px-3 text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-1 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isProcessingPhoto ? (
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="9" cy="9" r="2" />
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                </svg>
+              )}
+              Replace Photo
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+          <p className="text-sm font-bold text-slate-700 mb-3">Helicopter Photo</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => photoCameraInputRef.current?.click()}
+              disabled={isProcessingPhoto}
+              className="aspect-video bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center hover:bg-slate-100 hover:border-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isProcessingPhoto ? (
+                <>
+                  <svg className="animate-spin h-8 w-8 text-slate-400 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <p className="text-slate-500 text-xs">Processing...</p>
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 mb-2">
+                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                    <circle cx="12" cy="13" r="3" />
+                  </svg>
+                  <p className="text-slate-600 font-medium text-sm mb-1">Take Photo</p>
+                  <p className="text-slate-400 text-xs px-2 text-center">Use camera</p>
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => photoGalleryInputRef.current?.click()}
+              disabled={isProcessingPhoto}
+              className="aspect-video bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center hover:bg-slate-100 hover:border-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isProcessingPhoto ? (
+                <>
+                  <svg className="animate-spin h-8 w-8 text-slate-400 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <p className="text-slate-500 text-xs">Processing...</p>
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 mb-2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="9" cy="9" r="2" />
+                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                  </svg>
+                  <p className="text-slate-600 font-medium text-sm mb-1">Add Photo</p>
+                  <p className="text-slate-400 text-xs px-2 text-center">From gallery</p>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
+
+      {/* Hidden file inputs shared by both photo branches */}
+      <input ref={photoCameraInputRef} type="file" accept="image/*" capture="environment" onChange={handlePhotoCapture} className="hidden" disabled={isProcessingPhoto} />
+      <input ref={photoGalleryInputRef} type="file" accept="image/*" onChange={handlePhotoCapture} className="hidden" disabled={isProcessingPhoto} />
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
         <div className="flex items-center justify-between">
