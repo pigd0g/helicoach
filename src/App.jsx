@@ -11,6 +11,8 @@ import FlightRecordsView from "./components/FlightRecordsView";
 import FlightRecordNew from "./components/FlightRecordNew";
 import FlightRecordDetail from "./components/FlightRecordDetail";
 import PreflightChecklist from "./components/PreflightChecklist";
+import TermsOfService from "./components/TermsOfService";
+import PrivacyNotice from "./components/PrivacyNotice";
 
 function App() {
   const [view, setView] = useState("levels");
@@ -62,6 +64,16 @@ function App() {
 
       if (parts[0] === "about") {
         setView("about");
+        return;
+      }
+
+      if (parts[0] === "terms") {
+        setView("terms");
+        return;
+      }
+
+      if (parts[0] === "privacy") {
+        setView("privacy");
         return;
       }
 
@@ -414,6 +426,10 @@ Do Not Include Current Progress Summary`;
   const pageTitle = useMemo(() => {
     if (view === "about") {
       return "Helicoach | About";
+    } else if (view === "terms") {
+      return "Helicoach | Terms of Service";
+    } else if (view === "privacy") {
+      return "Helicoach | Privacy Notice";
     } else if (view === "detail" && selectedManeuver) {
       return `Helicoach | ${selectedManeuver.id} - ${selectedManeuver.title}`;
     } else if (view === "maneuvers" && selectedLevel) {
@@ -457,6 +473,10 @@ Do Not Include Current Progress Summary`;
             handleImportData={handleImportData}
           />
         )}
+
+        {view === "terms" && <TermsOfService />}
+
+        {view === "privacy" && <PrivacyNotice />}
 
         {view === "levels" && (
           <LevelsView
