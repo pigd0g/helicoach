@@ -3,8 +3,14 @@ FROM node:lts-alpine AS build
 
 WORKDIR /app
 
+# Build-time args (Vite embeds VITE_ prefixed vars at build time)
 ARG VITE_GA_ID
+ARG VITE_GOOGLE_CLIENT_ID
+ARG VITE_GOOGLE_API_KEY
+
 ENV VITE_GA_ID=$VITE_GA_ID
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+ENV VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY
 
 # Install dependencies (use package-lock if present)
 COPY package*.json ./
