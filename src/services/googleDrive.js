@@ -29,6 +29,7 @@ class GoogleDriveService {
           this.gapiInited = true;
           resolve();
         } catch (error) {
+          console.error("Error initializing Google API client:", error);
           reject(error);
         }
       });
@@ -59,6 +60,7 @@ class GoogleDriveService {
 
         this.tokenClient.callback = (response) => {
           if (response.error !== undefined) {
+            console.error("Error getting access token:", response);
             reject(response);
             return;
           }
@@ -73,6 +75,7 @@ class GoogleDriveService {
           this.tokenClient.requestAccessToken({ prompt: "" });
         }
       } catch (error) {
+        console.error("Error getting access token:", error);
         reject(error);
       }
     });
