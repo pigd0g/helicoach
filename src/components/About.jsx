@@ -115,6 +115,14 @@ export default function About({ handleExportData, handleImportData }) {
       <div className="text-center text-slate-400 text-sm pt-4">
         <p>Happy Flying!</p>
         <p className="mt-1">HeliCoach</p>
+        <div className="mt-3 flex justify-center gap-4">
+          <a href="/terms" className="underline hover:text-slate-600 transition-colors">
+            Terms of Service
+          </a>
+          <a href="/privacy" className="underline hover:text-slate-600 transition-colors">
+            Privacy Notice
+          </a>
+        </div>
       </div>
     </div>
   );
