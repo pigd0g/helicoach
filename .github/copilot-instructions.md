@@ -64,6 +64,17 @@ Flight Records feature
 - Preflight checklist has 22 items across 6 sections. Completion date is saved and highlighted red if >7 days old.
 - All helicopter CRUD operations in `App.jsx` with localStorage sync.
 
+Google Drive backup/restore
+
+- Seamless cloud backup using Google Drive API v3 and Google Identity Services (GIS).
+- Service layer in `src/services/googleDrive.js` handles authentication, file management (create/update/download).
+- Backup file named `helicoach-backup.json` stored in user's Google Drive with `drive.file` scope (app-created files only).
+- Uses OAuth 2.0 flow with consent screen — requires `VITE_GOOGLE_CLIENT_ID` and `VITE_GOOGLE_API_KEY` environment variables.
+- Setup: Create project in Google Cloud Console, enable Drive API, create OAuth 2.0 credentials, add authorized origins.
+- Scripts loaded via CDN in `index.html`: `apis.google.com/js/api.js` and `accounts.google.com/gsi/client`.
+- UI in `About.jsx` with loading states, success/error messages, automatic data sync with existing import/export handlers.
+- Environment variables documented in `.env.example` — copy to `.env` and populate with your credentials for local development.
+
 Developer workflows
 
 - Local dev: `npm ci` then `npm run dev` (Vite serves at 5173 by default). `--host` is used to make the dev server reachable on LAN.
