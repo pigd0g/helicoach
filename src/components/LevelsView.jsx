@@ -80,6 +80,12 @@ export default function LevelsView({
         onPrev={prevTip}
         onNext={nextTip}
       />
+
+      <p className="text-center text-xs text-gray-400 mt-4">
+        <a href="/privacy" className="hover:underline">
+          Privacy Policy
+        </a>
+      </p>
     </div>
   );
 }
