@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function Header({ view, onBack, onAbout, onFlightRecords }) {
+export default function Header({
+  view,
+  onBack,
+  onAbout,
+  onFlightRecords,
+  onSessions,
+}) {
   return (
     <header className="sticky top-0 z-50 bg-slate-900 text-white shadow-lg backdrop-blur-sm bg-opacity-95">
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-center relative">
@@ -25,11 +31,47 @@ export default function Header({ view, onBack, onAbout, onFlightRecords }) {
             </svg>
           </button>
         )}
-        <a className="flex items-center justify-center1 cursor-pointer" href="/">
+        <a
+          className="flex items-center justify-center1 cursor-pointer"
+          href="/"
+        >
           <img src="/logow.png" alt="HeliCoach Logo" className="h-8 w-8 mr-2" />
           <h1 className="text-lg font-bold tracking-wide">HeliCoach</h1>
         </a>
         <div className="absolute right-4 flex items-center gap-1">
+          {view !== "sessions" &&
+            view !== "sessionnew" &&
+            view !== "sessionedit" &&
+            view !== "sessiondetail" && (
+              <button
+                className="p-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 cursor-pointer"
+                onClick={onSessions}
+                aria-label="Flight Sessions"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M8 2v4" />
+                  <path d="M16 2v4" />
+                  <rect width="18" height="18" x="3" y="4" rx="2" />
+                  <path d="M3 10h18" />
+                  <path d="M8 14h.01" />
+                  <path d="M12 14h.01" />
+                  <path d="M16 14h.01" />
+                  <path d="M8 18h.01" />
+                  <path d="M12 18h.01" />
+                  <path d="M16 18h.01" />
+                </svg>
+              </button>
+            )}
           {view !== "flightrecords" &&
             view !== "flightrecordnew" &&
             view !== "flightrecorddetail" &&

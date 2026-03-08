@@ -1,18 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { slugify, trackEvent } from "../analytics";
 import ConfettiCelebration from "./ConfettiCelebration";
+import {
+  CONSISTENCY_OPTIONS,
+  PROFICIENCY_STATUSES,
+  READINESS_OPTIONS,
+} from "../dataModel";
+
+const formatLabel = (value = "") =>
+  value
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 
 export default function ManeuverDetail({
   selectedManeuver,
   completedManeuvers,
+  selectedManeuverProgress,
+  selectedManeuverLastPracticedAt,
+  saveManeuverProgress,
   toggleCompletion,
   showVideo,
   setShowVideo,
 }) {
-  if (!selectedManeuver) return null;
-
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [status, setStatus] = useState(
+    selectedManeuverProgress?.status || "not_started",
+  );
+  const [confidence, setConfidence] = useState(
+    selectedManeuverProgress?.confidence || 0,
+  );
+  const [consistency, setConsistency] = useState(
+    selectedManeuverProgress?.consistency || "unknown",
+  );
+  const [simStatus, setSimStatus] = useState(
+    selectedManeuverProgress?.simStatus || "not_started",
+  );
+  const [realStatus, setRealStatus] = useState(
+    selectedManeuverProgress?.realStatus || "not_started",
+  );
+  const [notes, setNotes] = useState(selectedManeuverProgress?.notes || "");
 
   useEffect(() => {
     if (!copied) return;
@@ -26,6 +53,8 @@ export default function ManeuverDetail({
     return () => clearTimeout(timer);
   }, [showConfetti]);
 
+  if (!selectedManeuver) return null;
+
   const handleToggleCompletion = () => {
     const wasCompleted = completedManeuvers[selectedManeuver.id];
     toggleCompletion(selectedManeuver.id);
@@ -38,14 +67,14 @@ export default function ManeuverDetail({
     const nextStatus = wasCompleted ? "incomplete" : "complete";
     trackEvent(
       `maneuver_${nextStatus}_${selectedManeuver.id}_${slugify(
-        selectedManeuver.title
+        selectedManeuver.title,
       )}`,
       {
         type: "maneuver",
         id: selectedManeuver.id,
         title: selectedManeuver.title,
         status: nextStatus,
-      }
+      },
     );
   };
 
@@ -56,6 +85,31 @@ export default function ManeuverDetail({
     } catch (err) {
       console.error("Copy failed", err);
     }
+  };
+
+  const handleSaveProgress = () => {
+    saveManeuverProgress(selectedManeuver.id, {
+      status,
+      confidence,
+      consistency,
+      simStatus,
+      realStatus,
+      notes,
+    });
+
+    trackEvent(
+      `maneuver_progress_saved_${selectedManeuver.id}_${slugify(selectedManeuver.title)}`,
+      {
+        type: "maneuver-progress",
+        id: selectedManeuver.id,
+        title: selectedManeuver.title,
+        status,
+        confidence,
+        consistency,
+        simStatus,
+        realStatus,
+      },
+    );
   };
 
   return (
@@ -83,6 +137,11 @@ export default function ManeuverDetail({
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
                 Completed
+              </span>
+            )}
+            {selectedManeuverProgress && (
+              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
+                {formatLabel(selectedManeuverProgress.status)}
               </span>
             )}
             <button
@@ -141,6 +200,120 @@ export default function ManeuverDetail({
             </div>
           </div>
 
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                Proficiency
+              </h3>
+              {selectedManeuverLastPracticedAt && (
+                <span className="text-xs text-slate-500">
+                  Last practiced{" "}
+                  {new Date(
+                    selectedManeuverLastPracticedAt,
+                  ).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                <span>Overall Status</span>
+                <select
+                  value={status}
+                  onChange={(event) => setStatus(event.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
+                >
+                  {PROFICIENCY_STATUSES.map((option) => (
+                    <option key={option} value={option}>
+                      {formatLabel(option)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                <span>Consistency</span>
+                <select
+                  value={consistency}
+                  onChange={(event) => setConsistency(event.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
+                >
+                  {CONSISTENCY_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {formatLabel(option)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                <span>Simulator Readiness</span>
+                <select
+                  value={simStatus}
+                  onChange={(event) => setSimStatus(event.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
+                >
+                  {READINESS_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {formatLabel(option)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                <span>Real Flight Readiness</span>
+                <select
+                  value={realStatus}
+                  onChange={(event) => setRealStatus(event.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
+                >
+                  {READINESS_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {formatLabel(option)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <label className="space-y-2 text-sm font-medium text-slate-700 block">
+              <span>Confidence ({confidence}/5)</span>
+              <input
+                type="range"
+                min="0"
+                max="5"
+                step="1"
+                value={confidence}
+                onChange={(event) =>
+                  setConfidence(parseInt(event.target.value, 10))
+                }
+                className="w-full"
+              />
+            </label>
+
+            <label className="space-y-2 text-sm font-medium text-slate-700 block">
+              <span>Notes</span>
+              <textarea
+                rows="4"
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+                placeholder="What is holding this maneuver back, or what makes it consistent right now?"
+                className="w-full px-4 py-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-y"
+              />
+            </label>
+
+            <button
+              type="button"
+              onClick={handleSaveProgress}
+              className="w-full py-3 px-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
+            >
+              Save Proficiency
+            </button>
+          </div>
+
           {selectedManeuver.url && (
             <div className="space-y-3">
               <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
@@ -179,8 +352,8 @@ export default function ManeuverDetail({
                       .split("/")
                       .pop()}?start=${parseInt(
                       new URLSearchParams(
-                        selectedManeuver.url.split("?")[1]
-                      ).get("t") || 0
+                        selectedManeuver.url.split("?")[1],
+                      ).get("t") || 0,
                     )}&autoplay=1`}
                     title="YouTube video player"
                     frameBorder="0"

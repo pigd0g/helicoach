@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { slugify, trackEvent } from "../analytics";
 import ConfettiCelebration from "./ConfettiCelebration";
+import TrainingModeTabs from "./TrainingModeTabs";
 
 export default function ManeuversView({
   selectedLevel,
@@ -8,10 +9,39 @@ export default function ManeuversView({
   showVideo,
   setShowVideo,
   completedManeuvers,
+  maneuverProgress,
+  maneuverLastPracticedAt,
+  trainingRecommendations,
   handleManeuverClick,
   toggleLevelCompletion,
+  selectedTrainingMode,
+  onTrainingModeChange,
 }) {
+  const formatLabel = (value = "") =>
+    value
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (character) => character.toUpperCase());
+
+  const getModeStatus = (progress) => {
+    if (!progress) {
+      return "not_started";
+    }
+
+    if (selectedTrainingMode === "sim") {
+      return progress.simStatus || "not_started";
+    }
+
+    if (selectedTrainingMode === "real") {
+      return progress.realStatus || "not_started";
+    }
+
+    return progress.status || "not_started";
+  };
+
   const [showConfetti, setShowConfetti] = useState(false);
+  const recommendedIds = new Set(
+    trainingRecommendations.map((entry) => entry.id),
+  );
 
   useEffect(() => {
     if (!showConfetti) return;
@@ -37,7 +67,7 @@ export default function ManeuversView({
         id: selectedLevel.id,
         title: selectedLevel.title,
         status: nextStatus,
-      }
+      },
     );
   };
 
@@ -77,6 +107,28 @@ export default function ManeuversView({
             {getLevelProgress(selectedLevel).percentage}% Complete
           </span>
         </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-bold text-slate-900">Training View</p>
+            <p className="text-sm text-slate-500 mt-1">
+              Switch between overall, simulator, and real-flight readiness
+              without changing syllabus order.
+            </p>
+          </div>
+          <TrainingModeTabs
+            selectedMode={selectedTrainingMode}
+            onChange={onTrainingModeChange}
+          />
+        </div>
+        {trainingRecommendations.length > 0 && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            Recommended in this level:{" "}
+            {trainingRecommendations.map((entry) => entry.title).join(", ")}
+          </div>
+        )}
       </div>
 
       {selectedLevel.video && (
@@ -126,6 +178,10 @@ export default function ManeuversView({
       <div className="space-y-3">
         {selectedLevel.maneuvers.map((maneuver) => {
           const isCompleted = completedManeuvers[maneuver.id];
+          const progress = maneuverProgress[maneuver.id];
+          const lastPracticedAt = maneuverLastPracticedAt[maneuver.id];
+          const modeStatus = getModeStatus(progress);
+          const isRecommended = recommendedIds.has(maneuver.id);
           return (
             <div
               key={maneuver.id}
@@ -169,6 +225,26 @@ export default function ManeuversView({
                 >
                   {maneuver.title}
                 </div>
+                {(progress || lastPracticedAt || isRecommended) && (
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                    {isRecommended && (
+                      <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-medium">
+                        Recommended
+                      </span>
+                    )}
+                    {progress && (
+                      <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-medium">
+                        {formatLabel(modeStatus)}
+                      </span>
+                    )}
+                    {lastPracticedAt && (
+                      <span className="text-slate-500">
+                        Last practiced{" "}
+                        {new Date(lastPracticedAt).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="text-slate-400">
                 <svg

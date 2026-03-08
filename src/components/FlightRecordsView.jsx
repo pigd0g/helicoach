@@ -4,7 +4,7 @@ export default function FlightRecordsView({
   helicopters,
   onAddNew,
   onSelectHelicopter,
-  onDeleteHelicopter,
+  onViewSessions,
 }) {
   return (
     <div className="space-y-6">
@@ -15,27 +15,55 @@ export default function FlightRecordsView({
         </p>
       </div>
 
-      <button
-        onClick={onAddNew}
-        className="w-full py-4 px-6 bg-green-600 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-green-700 transition-colors shadow-sm cursor-pointer"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      <div className="grid gap-3 sm:grid-cols-2">
+        <button
+          onClick={onAddNew}
+          className="w-full py-4 px-6 bg-green-600 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-green-700 transition-colors shadow-sm cursor-pointer"
         >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 8v8" />
-          <path d="M8 12h8" />
-        </svg>
-        Add New Helicopter
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v8" />
+            <path d="M8 12h8" />
+          </svg>
+          Add New Helicopter
+        </button>
+
+        <button
+          onClick={onViewSessions}
+          className="w-full py-4 px-6 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M8 2v4" />
+            <path d="M16 2v4" />
+            <rect width="18" height="18" x="3" y="4" rx="2" />
+            <path d="M3 10h18" />
+            <path d="M8 14h.01" />
+            <path d="M12 14h.01" />
+            <path d="M16 14h.01" />
+          </svg>
+          View Sessions
+        </button>
+      </div>
 
       {helicopters.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
