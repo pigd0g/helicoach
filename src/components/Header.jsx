@@ -4,7 +4,7 @@ export default function Header({ view, onBack, onAbout, onFlightRecords }) {
   return (
     <header className="sticky top-0 z-50 bg-slate-900 text-white shadow-lg backdrop-blur-sm bg-opacity-95">
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-center relative">
-        {view !== "levels" && (
+        {view !== "home" && (
           <button
             className="absolute left-4 p-2 -ml-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 cursor-pointer"
             onClick={onBack}

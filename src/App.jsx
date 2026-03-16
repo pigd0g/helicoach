@@ -4,6 +4,7 @@ import { levels, tips } from "./data";
 
 import Header from "./components/Header";
 import About from "./components/About";
+import HomeView from "./components/HomeView";
 import LevelsView from "./components/LevelsView";
 import ManeuversView from "./components/ManeuversView";
 import ManeuverDetail from "./components/ManeuverDetail";
@@ -15,7 +16,7 @@ import TermsOfService from "./components/TermsOfService";
 import PrivacyNotice from "./components/PrivacyNotice";
 
 function App() {
-  const [view, setView] = useState("levels");
+  const [view, setView] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [showVideo, setShowVideo] = useState(false);
   const [showVideoMove, setShowVideoMove] = useState(false);
@@ -56,6 +57,13 @@ function App() {
       const parts = path === "/" ? [] : path.split("/").filter(Boolean);
 
       if (path === "/" || parts.length === 0) {
+        setView("home");
+        setSelectedLevel(null);
+        setSelectedManeuver(null);
+        return;
+      }
+
+      if (parts[0] === "levels") {
         setView("levels");
         setSelectedLevel(null);
         setSelectedManeuver(null);
@@ -157,11 +165,11 @@ function App() {
         return;
       }
 
-      setView("levels");
+      setView("home");
       setSelectedLevel(null);
       setSelectedManeuver(null);
     } catch (e) {
-      setView("levels");
+      setView("home");
       setSelectedLevel(null);
       setSelectedManeuver(null);
     }
@@ -319,6 +327,8 @@ Do Not Include Current Progress Summary`;
   const goBack = () => {
     if (view === "detail" && selectedLevel) {
       navigate(`/level/${selectedLevel.id}`);
+    } else if (view === "maneuvers") {
+      navigate(`/levels`);
     } else if (view === "flightrecorddetail" || view === "preflight") {
       navigate(`/flightrecords`);
     } else if (view === "flightrecordnew") {
@@ -424,7 +434,9 @@ Do Not Include Current Progress Summary`;
   };
 
   const pageTitle = useMemo(() => {
-    if (view === "about") {
+    if (view === "home") {
+      return "Helicoach - RC Helicopter Pilot Proficiency Training";
+    } else if (view === "about") {
       return "Helicoach | About";
     } else if (view === "terms") {
       return "Helicoach | Terms of Service";
@@ -477,6 +489,22 @@ Do Not Include Current Progress Summary`;
         {view === "terms" && <TermsOfService />}
 
         {view === "privacy" && <PrivacyNotice />}
+
+        {view === "home" && (
+          <HomeView
+            completedManeuvers={completedManeuvers}
+            handleCopyPrompt={handleCopyPrompt}
+            onLevels={() => {
+              navigate("/levels");
+              window.scrollTo(0, 0);
+            }}
+            onFlightRecords={() => {
+              navigate("/flightrecords");
+              window.scrollTo(0, 0);
+            }}
+            onManeuverClick={handleManeuverClick}
+          />
+        )}
 
         {view === "levels" && (
           <LevelsView
