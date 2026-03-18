@@ -493,6 +493,7 @@ Do Not Include Current Progress Summary`;
         {view === "home" && (
           <HomeView
             completedManeuvers={completedManeuvers}
+            helicopters={helicopters}
             handleCopyPrompt={handleCopyPrompt}
             onLevels={() => {
               navigate("/levels");
@@ -503,6 +504,20 @@ Do Not Include Current Progress Summary`;
               window.scrollTo(0, 0);
             }}
             onManeuverClick={handleManeuverClick}
+            onHelicopterClick={(helicopter) => {
+              navigate(`/flightrecords/helicopter/${helicopter.id}`);
+              window.scrollTo(0, 0);
+            }}
+            onHelicopterAdd={() => {
+              navigate("/flightrecords/new");
+              window.scrollTo(0, 0);
+            }}
+            onHelicopterIncrementFlights={(helicopter) => {
+              const currentFlights = helicopter.flights || 0;
+              updateHelicopter(helicopter.id, {
+                flights: currentFlights + 1,
+              });
+            }}
           />
         )}
 
