@@ -62,7 +62,7 @@ export default function FlightRecordNew({ onSave, onCancel }) {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
           <div className="space-y-3">
             <label className="block text-sm font-bold text-slate-700">
-              Helicopter Title <span className="text-red-500">*</span>
+              Helicopter Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"

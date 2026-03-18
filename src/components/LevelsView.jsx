@@ -14,22 +14,6 @@ export default function LevelsView({
 }) {
   return (
     <div className="space-y-6">
-      <p className="text-center text-xs text-gray-500">
-        HeliCoach provides structured RC Helicopter Training as a Pilot
-        Proficiency Program for RC Heli pilots of all levels.
-      </p>
-      <p className="text-center text-xs text-gray-500">
-        Start with the basics, progress to aerobatics and learn 3d moves like
-        piroflips and tic-tocs. Track progress, level up at your pace, and get
-        AI coaching from your AI assistant.
-      </p>
-      <p className="text-center text-xs text-gray-500">
-        🎁 Checkout the new flight records and preflight checklist{" "}
-        <a className="text-blue-600 underline cursor-pointer" href="/flightrecords">
-          here
-        </a>
-        .
-      </p>
       <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg">
         <h2 className="text-lg font-bold text-white mb-2">
           AI Coach Assistant
