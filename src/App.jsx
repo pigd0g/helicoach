@@ -1,6 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { levels, tips } from "./data";
+import googleDriveService from "./services/googleDrive";
 
 import Header from "./components/Header";
 import About from "./components/About";
@@ -14,6 +21,8 @@ import FlightRecordDetail from "./components/FlightRecordDetail";
 import PreflightChecklist from "./components/PreflightChecklist";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyNotice from "./components/PrivacyNotice";
+
+const LOCAL_DATA_UPDATED_AT_KEY = "localDataUpdatedAt";
 
 function App() {
   const [view, setView] = useState("home");
@@ -35,6 +44,16 @@ function App() {
   });
 
   const [selectedHelicopter, setSelectedHelicopter] = useState(null);
+  const [localDataUpdatedAt, setLocalDataUpdatedAt] = useState(() => {
+    return (
+      localStorage.getItem(LOCAL_DATA_UPDATED_AT_KEY) ||
+      new Date().toISOString()
+    );
+  });
+  const [driveSyncState, setDriveSyncState] = useState(() =>
+    googleDriveService.getSyncState(),
+  );
+  const applyingCloudSyncRef = useRef(false);
 
   useEffect(() => {
     localStorage.setItem(
@@ -46,6 +65,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem("helicopters", JSON.stringify(helicopters));
   }, [helicopters]);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_DATA_UPDATED_AT_KEY, localDataUpdatedAt);
+  }, [localDataUpdatedAt]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -185,6 +208,7 @@ function App() {
       }
       return newState;
     });
+    setLocalDataUpdatedAt(new Date().toISOString());
   };
 
   const toggleLevelCompletion = (level) => {
@@ -200,6 +224,7 @@ function App() {
       });
       return newState;
     });
+    setLocalDataUpdatedAt(new Date().toISOString());
   };
 
   const addHelicopter = (helicopter) => {
@@ -215,6 +240,7 @@ function App() {
       createdAt: new Date().toISOString(),
     };
     setHelicopters((prev) => [...prev, newHelicopter]);
+    setLocalDataUpdatedAt(new Date().toISOString());
     return newHelicopter;
   };
 
@@ -222,10 +248,12 @@ function App() {
     setHelicopters((prev) =>
       prev.map((h) => (h.id === id ? { ...h, ...updates } : h)),
     );
+    setLocalDataUpdatedAt(new Date().toISOString());
   };
 
   const deleteHelicopter = (id) => {
     setHelicopters((prev) => prev.filter((h) => h.id !== id));
+    setLocalDataUpdatedAt(new Date().toISOString());
   };
 
   const completePreflightCheck = (helicopterId) => {
@@ -338,13 +366,99 @@ Do Not Include Current Progress Summary`;
     }
   };
 
-  const handleExportData = () => {
-    const data = {
-      completedManeuvers,
-      helicopters,
-      exportedAt: new Date().toISOString(),
-      version: 1,
+  const buildSyncPayload = useCallback(
+    (updatedAtValue = localDataUpdatedAt) => {
+      return {
+        completedManeuvers,
+        helicopters,
+        exportedAt: updatedAtValue,
+        updatedAt: updatedAtValue,
+        version: 1,
+      };
+    },
+    [completedManeuvers, helicopters, localDataUpdatedAt],
+  );
+
+  const sanitizeImportedData = useCallback((data) => {
+    let hasValidData = false;
+    let nextCompletedManeuvers = null;
+    let nextHelicopters = null;
+
+    if (
+      data.completedManeuvers &&
+      typeof data.completedManeuvers === "object"
+    ) {
+      const validManeuverIds = new Set(
+        levels.flatMap((l) => l.maneuvers.map((m) => m.id)),
+      );
+      const sanitized = {};
+      for (const [key, value] of Object.entries(data.completedManeuvers)) {
+        if (validManeuverIds.has(key) && value === true) {
+          sanitized[key] = true;
+        }
+      }
+      nextCompletedManeuvers = sanitized;
+      hasValidData = true;
+    }
+
+    if (data.helicopters && Array.isArray(data.helicopters)) {
+      nextHelicopters = data.helicopters.filter(
+        (h) =>
+          h &&
+          typeof h === "object" &&
+          h.id &&
+          h.title &&
+          typeof h.title === "string",
+      );
+      hasValidData = true;
+    }
+
+    return {
+      hasValidData,
+      nextCompletedManeuvers,
+      nextHelicopters,
+      updatedAt: data.updatedAt || data.exportedAt || new Date().toISOString(),
     };
+  }, []);
+
+  const applyImportedData = useCallback(
+    (data, { showSuccess = false, fromCloud = false } = {}) => {
+      const sanitized = sanitizeImportedData(data);
+      if (!sanitized.hasValidData) {
+        return false;
+      }
+
+      if (fromCloud) {
+        applyingCloudSyncRef.current = true;
+      }
+
+      if (sanitized.nextCompletedManeuvers) {
+        setCompletedManeuver(sanitized.nextCompletedManeuvers);
+      }
+      if (sanitized.nextHelicopters) {
+        setHelicopters(sanitized.nextHelicopters);
+      }
+
+      setLocalDataUpdatedAt(sanitized.updatedAt);
+
+      if (showSuccess) {
+        alert("Progress imported successfully!");
+      }
+
+      if (fromCloud) {
+        setTimeout(() => {
+          applyingCloudSyncRef.current = false;
+        }, 0);
+      }
+
+      return true;
+    },
+    [sanitizeImportedData],
+  );
+
+  const handleExportData = () => {
+    const now = new Date().toISOString();
+    const data = buildSyncPayload(now);
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
@@ -368,43 +482,8 @@ Do Not Include Current Progress Summary`;
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target?.result);
-        let hasValidData = false;
-
-        // Import completed maneuvers
-        if (
-          data.completedManeuvers &&
-          typeof data.completedManeuvers === "object"
-        ) {
-          const validManeuverIds = new Set(
-            levels.flatMap((l) => l.maneuvers.map((m) => m.id)),
-          );
-          const sanitized = {};
-          for (const [key, value] of Object.entries(data.completedManeuvers)) {
-            if (validManeuverIds.has(key) && value === true) {
-              sanitized[key] = true;
-            }
-          }
-          setCompletedManeuver(sanitized);
-          hasValidData = true;
-        }
-
-        // Import helicopters
-        if (data.helicopters && Array.isArray(data.helicopters)) {
-          const sanitizedHelicopters = data.helicopters.filter(
-            (h) =>
-              h &&
-              typeof h === "object" &&
-              h.id &&
-              h.title &&
-              typeof h.title === "string",
-          );
-          setHelicopters(sanitizedHelicopters);
-          hasValidData = true;
-        }
-
-        if (hasValidData) {
-          alert("Progress imported successfully!");
-        } else {
+        const applied = applyImportedData(data, { showSuccess: true });
+        if (!applied) {
           alert(
             "Invalid file format. Please select a valid HeliCoach export file.",
           );
@@ -416,6 +495,110 @@ Do Not Include Current Progress Summary`;
     reader.readAsText(file);
     event.target.value = "";
   };
+
+  const refreshDriveSyncState = () => {
+    setDriveSyncState(googleDriveService.getSyncState());
+  };
+
+  const handleEnableDriveSync = async () => {
+    const result = await googleDriveService.enableSync(
+      buildSyncPayload(new Date().toISOString()),
+    );
+    if (result?.action === "pull" && result.remoteData) {
+      applyImportedData(result.remoteData, { fromCloud: true });
+    }
+    refreshDriveSyncState();
+  };
+
+  const handleDisableDriveSync = () => {
+    googleDriveService.disableSync();
+    refreshDriveSyncState();
+  };
+
+  const handleReconnectDriveSync = async () => {
+    const result = await googleDriveService.reconnectAndSync(
+      buildSyncPayload(new Date().toISOString()),
+    );
+    if (result?.action === "pull" && result.remoteData) {
+      applyImportedData(result.remoteData, { fromCloud: true });
+    }
+    refreshDriveSyncState();
+  };
+
+  const handleSyncDriveNow = async () => {
+    const result = await googleDriveService.syncNow(
+      buildSyncPayload(localDataUpdatedAt),
+      { interactive: true },
+    );
+    if (result?.action === "pull" && result.remoteData) {
+      applyImportedData(result.remoteData, { fromCloud: true });
+    }
+    refreshDriveSyncState();
+  };
+
+  useEffect(() => {
+    if (!driveSyncState.enabled) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const result = await googleDriveService.syncNow(
+          buildSyncPayload(localDataUpdatedAt),
+          { interactive: false },
+        );
+        if (cancelled) return;
+        if (result?.action === "pull" && result.remoteData) {
+          applyImportedData(result.remoteData, { fromCloud: true });
+        }
+      } catch {
+        // Avoid interrupting app flow on startup reconcile errors.
+      } finally {
+        if (!cancelled) {
+          refreshDriveSyncState();
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    driveSyncState.enabled,
+    buildSyncPayload,
+    localDataUpdatedAt,
+    applyImportedData,
+  ]);
+
+  useEffect(() => {
+    if (!driveSyncState.enabled || applyingCloudSyncRef.current) {
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        const result = await googleDriveService.syncNow(
+          buildSyncPayload(localDataUpdatedAt),
+          { interactive: false },
+        );
+        if (result?.action === "pull" && result.remoteData) {
+          applyImportedData(result.remoteData, { fromCloud: true });
+        }
+      } catch {
+        // Background sync failures should not block the UI.
+      } finally {
+        refreshDriveSyncState();
+      }
+    }, 1200);
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    completedManeuvers,
+    helicopters,
+    localDataUpdatedAt,
+    driveSyncState.enabled,
+    buildSyncPayload,
+    applyImportedData,
+  ]);
 
   const nextTip = () => setCurrentTipIndex((prev) => (prev + 1) % tips.length);
   const prevTip = () =>
@@ -483,6 +666,11 @@ Do Not Include Current Progress Summary`;
           <About
             handleExportData={handleExportData}
             handleImportData={handleImportData}
+            driveSyncState={driveSyncState}
+            onEnableDriveSync={handleEnableDriveSync}
+            onDisableDriveSync={handleDisableDriveSync}
+            onReconnectDriveSync={handleReconnectDriveSync}
+            onSyncDriveNow={handleSyncDriveNow}
           />
         )}
 

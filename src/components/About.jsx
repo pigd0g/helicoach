@@ -1,98 +1,30 @@
 import React, { useState } from "react";
-import googleDriveService from "../services/googleDrive";
 
-export default function About({ handleExportData, handleImportData }) {
+export default function About({
+  handleExportData,
+  handleImportData,
+  driveSyncState,
+  onEnableDriveSync,
+  onDisableDriveSync,
+  onReconnectDriveSync,
+  onSyncDriveNow,
+}) {
   const [driveLoading, setDriveLoading] = useState(false);
   const [driveMessage, setDriveMessage] = useState("");
+  const isConfigured = driveSyncState?.configured;
+  const isEnabled = driveSyncState?.enabled;
+  const authRequired = driveSyncState?.authRequired;
 
-  const handleBackupToGoogleDrive = async () => {
-    if (
-      !import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-      !import.meta.env.VITE_GOOGLE_API_KEY
-    ) {
-      alert(
-        "Google Drive integration is not configured. Please set up environment variables.",
-      );
-      return;
-    }
-
+  const runDriveAction = async (action, successMessage) => {
     setDriveLoading(true);
     setDriveMessage("");
 
     try {
-      // Get data to backup (same format as export)
-      const completedManeuvers = JSON.parse(
-        localStorage.getItem("completedManeuvers") || "{}",
-      );
-      const helicopters = JSON.parse(
-        localStorage.getItem("helicopters") || "[]",
-      );
-      const data = {
-        completedManeuvers,
-        helicopters,
-        exportedAt: new Date().toISOString(),
-        version: 1,
-      };
-
-      await googleDriveService.saveToGoogleDrive(data);
-      setDriveMessage("✓ Successfully backed up to Google Drive");
+      await action();
+      setDriveMessage("✓ " + successMessage);
       setTimeout(() => setDriveMessage(""), 3000);
     } catch (error) {
-      console.error("Google Drive backup error:", error);
-      if (error.message === "Failed to save to Google Drive") {
-        setDriveMessage("✗ Failed to backup. Please try again.");
-      } else {
-        setDriveMessage("✗ " + (error.message || "Backup failed"));
-      }
-    } finally {
-      setDriveLoading(false);
-    }
-  };
-
-  const handleRestoreFromGoogleDrive = async () => {
-    if (
-      !import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-      !import.meta.env.VITE_GOOGLE_API_KEY
-    ) {
-      alert(
-        "Google Drive integration is not configured. Please set up environment variables.",
-      );
-      return;
-    }
-
-    if (
-      !confirm(
-        "This will replace your current progress with the backup from Google Drive. Continue?",
-      )
-    ) {
-      return;
-    }
-
-    setDriveLoading(true);
-    setDriveMessage("");
-
-    try {
-      const data = await googleDriveService.restoreFromGoogleDrive();
-
-      // Use the existing import handler to process the data
-      const blob = new Blob([JSON.stringify(data)], {
-        type: "application/json",
-      });
-      const file = new File([blob], "google-drive-backup.json", {
-        type: "application/json",
-      });
-      const event = { target: { files: [file] } };
-
-      handleImportData(event);
-      setDriveMessage("✓ Successfully restored from Google Drive");
-      setTimeout(() => setDriveMessage(""), 3000);
-    } catch (error) {
-      console.error("Google Drive restore error:", error);
-      if (error.message === "No backup found in Google Drive") {
-        setDriveMessage("✗ No backup found. Please backup first.");
-      } else {
-        setDriveMessage("✗ " + (error.message || "Restore failed"));
-      }
+      setDriveMessage("✗ " + (error.message || "Google Drive sync failed"));
     } finally {
       setDriveLoading(false);
     }
@@ -195,7 +127,7 @@ export default function About({ handleExportData, handleImportData }) {
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <h3 className="text-lg font-bold text-slate-900 mb-3">
           <span className="inline-flex items-center gap-2">
-            Google Drive Backup
+            Google Drive Sync
             <svg
               width="18"
               height="18"
@@ -217,9 +149,40 @@ export default function About({ handleExportData, handleImportData }) {
           </span>
         </h3>
         <p className="text-slate-700 mb-4">
-          Automatically sync your progress to Google Drive for seamless backup
-          and restore across devices.
+          Enable background sync to keep progress in Google Drive updated while
+          you train.
         </p>
+
+        <div className="mb-4 p-3 rounded-lg border border-slate-200 bg-slate-50 text-sm">
+          <p className="font-medium text-slate-700">
+            Status:{" "}
+            {isConfigured
+              ? isEnabled
+                ? "Enabled"
+                : "Disabled"
+              : "Not configured"}
+          </p>
+          <p className="text-slate-600 mt-1">
+            Last sync:{" "}
+            {driveSyncState?.lastSyncAt
+              ? new Date(driveSyncState.lastSyncAt).toLocaleString()
+              : "Never"}
+          </p>
+          {driveSyncState?.lastAction && (
+            <p className="text-slate-600 mt-1">
+              Last action: {driveSyncState.lastAction}
+            </p>
+          )}
+          {authRequired && (
+            <p className="text-amber-700 mt-1">
+              Authentication expired. Reconnect to continue background sync.
+            </p>
+          )}
+          {driveSyncState?.lastError && (
+            <p className="text-red-600 mt-1">{driveSyncState.lastError}</p>
+          )}
+        </div>
+
         {driveMessage && (
           <div
             className={`mb-4 p-3 rounded-lg text-sm font-medium ${
@@ -232,107 +195,63 @@ export default function About({ handleExportData, handleImportData }) {
           </div>
         )}
         <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={handleBackupToGoogleDrive}
-            disabled={driveLoading}
-            className="flex-1 py-2 px-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
-          >
-            {driveLoading ? (
-              <>
-                <svg
-                  className="animate-spin h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
+          {!isConfigured && (
+            <p className="text-sm text-amber-700">
+              Google Drive integration is not configured. Add environment
+              variables to enable sync.
+            </p>
+          )}
+
+          {isConfigured && !isEnabled && (
+            <button
+              onClick={() =>
+                runDriveAction(onEnableDriveSync, "Google Drive sync enabled")
+              }
+              disabled={driveLoading}
+              className="flex-1 py-2 px-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
+            >
+              {driveLoading ? "Enabling..." : "Enable Google Drive Sync"}
+            </button>
+          )}
+
+          {isConfigured && isEnabled && (
+            <>
+              <button
+                onClick={() =>
+                  runDriveAction(onSyncDriveNow, "Drive sync complete")
+                }
+                disabled={driveLoading}
+                className="flex-1 py-2 px-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
+              >
+                {driveLoading ? "Syncing..." : "Sync Now"}
+              </button>
+              {authRequired && (
+                <button
+                  onClick={() =>
+                    runDriveAction(
+                      onReconnectDriveSync,
+                      "Reconnected to Google Drive",
+                    )
+                  }
+                  disabled={driveLoading}
+                  className="flex-1 py-2 px-4 rounded-lg border-2 border-amber-600 text-amber-700 hover:bg-amber-50 disabled:border-slate-300 disabled:text-slate-300 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Backing up...
-              </>
-            ) : (
-              <>
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
-                  <path d="M12 12v9" />
-                  <path d="m16 16-4-4-4 4" />
-                </svg>
-                Backup to Drive
-              </>
-            )}
-          </button>
-          <button
-            onClick={handleRestoreFromGoogleDrive}
-            disabled={driveLoading}
-            className="flex-1 py-2 px-4 rounded-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 disabled:border-slate-300 disabled:text-slate-300 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
-          >
-            {driveLoading ? (
-              <>
-                <svg
-                  className="animate-spin h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Restoring...
-              </>
-            ) : (
-              <>
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
-                  <path d="M12 21v-9" />
-                  <path d="m8 13 4 4 4-4" />
-                </svg>
-                Restore from Drive
-              </>
-            )}
-          </button>
+                  {driveLoading ? "Reconnecting..." : "Reconnect"}
+                </button>
+              )}
+              <button
+                onClick={onDisableDriveSync}
+                disabled={driveLoading}
+                className="flex-1 py-2 px-4 rounded-lg border-2 border-slate-400 text-slate-700 hover:bg-slate-50 disabled:border-slate-300 disabled:text-slate-300 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
+              >
+                Disable Sync
+              </button>
+            </>
+          )}
         </div>
         <p className="text-xs text-slate-500 mt-3">
-          Requires Google account sign-in. Your data is only accessible by you.
+          Background sync runs silently after local progress updates.
+          Interactive sign-in is only needed when enabling or reconnecting.
         </p>
       </div>
 
