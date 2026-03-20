@@ -1,6 +1,32 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta name="theme-color" content="#f8fafc" />
+    <script>
+      (() => {
+        try {
+          const storageKey = "themePreference";
+          const validPreferences = new Set(["light", "dark", "system"]);
+          const savedPreference = localStorage.getItem(storageKey);
+          const preference = validPreferences.has(savedPreference)
+            ? savedPreference
+            : "system";
+          const prefersDark =
+            typeof window.matchMedia === "function" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const isDark =
+            preference === "dark" || (preference === "system" && prefersDark);
+          const theme = isDark ? "dark" : "light";
+
+          document.documentElement.classList.toggle("dark", isDark);
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+          document.documentElement.style.colorScheme = "light";
+        }
+      })();
+    </script>
     <!-- Google tag (gtag.js) -->
     <script
       async
