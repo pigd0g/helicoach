@@ -15,6 +15,20 @@ import PreflightChecklist from "./components/PreflightChecklist";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyNotice from "./components/PrivacyNotice";
 
+const THEME_STORAGE_KEY = "themePreference";
+const VALID_THEME_PREFERENCES = new Set(["light", "dark", "system"]);
+
+const sanitizeThemePreference = (value) =>
+  VALID_THEME_PREFERENCES.has(value) ? value : "system";
+
+const getSystemThemeMediaQuery = () =>
+  typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia("(prefers-color-scheme: dark)")
+    : null;
+
+const getSystemPrefersDark = () =>
+  getSystemThemeMediaQuery()?.matches ?? false;
+
 function App() {
   const [view, setView] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState(null);
@@ -33,8 +47,19 @@ function App() {
     const saved = localStorage.getItem("helicopters");
     return saved ? JSON.parse(saved) : [];
   });
+  const [themePreference, setThemePreference] = useState(() =>
+    sanitizeThemePreference(localStorage.getItem(THEME_STORAGE_KEY)),
+  );
+  const [systemPrefersDark, setSystemPrefersDark] =
+    useState(getSystemPrefersDark);
 
   const [selectedHelicopter, setSelectedHelicopter] = useState(null);
+  const effectiveTheme =
+    themePreference === "system"
+      ? systemPrefersDark
+        ? "dark"
+        : "light"
+      : themePreference;
 
   useEffect(() => {
     localStorage.setItem(
@@ -46,6 +71,40 @@ function App() {
   useEffect(() => {
     localStorage.setItem("helicopters", JSON.stringify(helicopters));
   }, [helicopters]);
+
+  useEffect(() => {
+    localStorage.setItem(THEME_STORAGE_KEY, themePreference);
+  }, [themePreference]);
+
+  useEffect(() => {
+    const mediaQuery = getSystemThemeMediaQuery();
+    if (!mediaQuery) {
+      return undefined;
+    }
+    const handleChange = (event) => setSystemPrefersDark(event.matches);
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+
+    mediaQuery.addListener(handleChange);
+    return () => mediaQuery.removeListener(handleChange);
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const isDark = effectiveTheme === "dark";
+
+    root.classList.toggle("dark", isDark);
+    root.dataset.theme = effectiveTheme;
+    root.style.colorScheme = effectiveTheme;
+
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) {
+      themeColor.setAttribute("content", isDark ? "#0f172a" : "#f8fafc");
+    }
+  }, [effectiveTheme]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -342,6 +401,7 @@ Do Not Include Current Progress Summary`;
     const data = {
       completedManeuvers,
       helicopters,
+      themePreference,
       exportedAt: new Date().toISOString(),
       version: 1,
     };
@@ -399,6 +459,12 @@ Do Not Include Current Progress Summary`;
               typeof h.title === "string",
           );
           setHelicopters(sanitizedHelicopters);
+          hasValidData = true;
+        }
+
+        if (typeof data.themePreference === "string") {
+          const sanitizedTheme = sanitizeThemePreference(data.themePreference);
+          setThemePreference(sanitizedTheme);
           hasValidData = true;
         }
 
@@ -483,6 +549,9 @@ Do Not Include Current Progress Summary`;
           <About
             handleExportData={handleExportData}
             handleImportData={handleImportData}
+            themePreference={themePreference}
+            effectiveTheme={effectiveTheme}
+            onThemeChange={setThemePreference}
           />
         )}
 

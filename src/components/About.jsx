@@ -1,7 +1,19 @@
 import React, { useState } from "react";
 import googleDriveService from "../services/googleDrive";
 
-export default function About({ handleExportData, handleImportData }) {
+const themeOptions = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+  { value: "system", label: "System" },
+];
+
+export default function About({
+  handleExportData,
+  handleImportData,
+  themePreference,
+  effectiveTheme,
+  onThemeChange,
+}) {
   const [driveLoading, setDriveLoading] = useState(false);
   const [driveMessage, setDriveMessage] = useState("");
 
@@ -30,6 +42,7 @@ export default function About({ handleExportData, handleImportData }) {
       const data = {
         completedManeuvers,
         helicopters,
+        themePreference,
         exportedAt: new Date().toISOString(),
         version: 1,
       };
@@ -133,6 +146,46 @@ export default function About({ handleExportData, handleImportData }) {
             progress.
           </li>
         </ul>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h3 className="text-lg font-bold text-slate-900 mb-3">Appearance</h3>
+        <p className="text-slate-700 mb-4">
+          Choose a theme for the app. System follows your device preference and
+          updates automatically.
+        </p>
+        <div
+          className="grid grid-cols-3 gap-2"
+          role="group"
+          aria-label="Theme preference"
+        >
+          {themeOptions.map((option) => {
+            const isSelected = themePreference === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => onThemeChange(option.value)}
+                aria-pressed={isSelected}
+                className={`rounded-lg border px-3 py-2 text-sm font-semibold transition-colors cursor-pointer ${
+                  isSelected
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="text-xs text-slate-500 mt-3">
+          Current theme:{" "}
+          <span className="font-semibold text-slate-700 capitalize">
+            {themePreference === "system"
+              ? `System (${effectiveTheme})`
+              : effectiveTheme}
+          </span>
+        </p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
