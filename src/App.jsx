@@ -21,10 +21,13 @@ const VALID_THEME_PREFERENCES = new Set(["light", "dark", "system"]);
 const sanitizeThemePreference = (value) =>
   VALID_THEME_PREFERENCES.has(value) ? value : "system";
 
+const getSystemThemeMediaQuery = () =>
+  typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia("(prefers-color-scheme: dark)")
+    : null;
+
 const getSystemPrefersDark = () =>
-  typeof window !== "undefined" &&
-  typeof window.matchMedia === "function" &&
-  window.matchMedia("(prefers-color-scheme: dark)").matches;
+  getSystemThemeMediaQuery()?.matches ?? false;
 
 function App() {
   const [view, setView] = useState("home");
@@ -74,14 +77,11 @@ function App() {
   }, [themePreference]);
 
   useEffect(() => {
-    if (typeof window.matchMedia !== "function") {
+    const mediaQuery = getSystemThemeMediaQuery();
+    if (!mediaQuery) {
       return undefined;
     }
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (event) => setSystemPrefersDark(event.matches);
-
-    setSystemPrefersDark(mediaQuery.matches);
 
     if (typeof mediaQuery.addEventListener === "function") {
       mediaQuery.addEventListener("change", handleChange);
@@ -530,7 +530,7 @@ Do Not Include Current Progress Summary`;
   }, [pageTitle]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100">
       <Header
         view={view}
         onBack={goBack}

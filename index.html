@@ -21,7 +21,8 @@
           document.documentElement.classList.toggle("dark", isDark);
           document.documentElement.dataset.theme = theme;
           document.documentElement.style.colorScheme = theme;
-        } catch {
+        } catch (error) {
+          console.error("Theme initialization failed", error);
           document.documentElement.dataset.theme = "light";
           document.documentElement.style.colorScheme = "light";
         }
