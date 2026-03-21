@@ -22,6 +22,7 @@ export default function FlightRecordDetail({
   const [crashes, setCrashes] = useState(helicopter.crashes || 0);
   const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
   const [isFlightDebouncing, setIsFlightDebouncing] = useState(false);
+  const [isCrashDebouncing, setIsCrashDebouncing] = useState(false);
   const photoCameraInputRef = useRef(null);
   const photoGalleryInputRef = useRef(null);
   const crashRateEntry = useMemo(
@@ -528,25 +529,44 @@ export default function FlightRecordDetail({
             {!isEditing && (
               <button
                 onClick={() => {
+                  if (isCrashDebouncing) return;
                   const newCrashes = crashes + 1;
                   setCrashes(newCrashes);
+                  setIsCrashDebouncing(true);
                   onIncrementCrashes(helicopter);
+                  setTimeout(() => setIsCrashDebouncing(false), 200);
                 }}
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold text-xs hover:bg-orange-700 transition-colors flex items-center gap-2 cursor-pointer"
+                disabled={isCrashDebouncing}
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold text-xs hover:bg-orange-700 transition-colors flex items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
+                {isCrashDebouncing ? (
+                  <svg
+                    className="animate-rotor"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="2.5" />
+                    <rect x="1" y="10.5" width="22" height="3" rx="1.5" />
+                    <rect x="10.5" y="1" width="3" height="22" rx="1.5" />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                )}
                 Add Crash
               </button>
             )}
