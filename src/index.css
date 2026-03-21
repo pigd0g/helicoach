@@ -175,3 +175,18 @@ html.dark textarea::placeholder {
   outline: 2px solid #60a5fa;
   outline-offset: 2px;
 }
+
+@keyframes rotor-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rotor {
+  animation: rotor-spin 0.35s linear infinite;
+  transform-origin: center;
+  display: block;
+}

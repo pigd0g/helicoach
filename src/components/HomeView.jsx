@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { levels } from "../data";
 import { buildCrashRateBreakdown } from "../statistics";
 import CrashRateDonutChart from "./CrashRateDonutChart";
@@ -46,6 +46,15 @@ export default function HomeView({
     () => buildCrashRateBreakdown(helicopters || []),
     [helicopters],
   );
+
+  const [debouncingId, setDebouncingId] = useState(null);
+
+  const handleAddFlight = (helicopter) => {
+    if (debouncingId === helicopter.id) return;
+    setDebouncingId(helicopter.id);
+    onHelicopterIncrementFlights(helicopter);
+    setTimeout(() => setDebouncingId(null), 200);
+  };
 
   return (
     <div className="space-y-5">
@@ -273,25 +282,41 @@ export default function HomeView({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      onHelicopterIncrementFlights(helicopter);
+                      handleAddFlight(helicopter);
                     }}
-                    className="px-3 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 text-xs"
+                    disabled={debouncingId === helicopter.id}
+                    className="px-3 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex items-center gap-1.5 shrink-0 text-xs disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
                     aria-label={`Add 1 flight to ${helicopter.title}`}
                     title="Add 1 flight"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
+                    {debouncingId === helicopter.id ? (
+                      <svg
+                        className="animate-rotor"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <circle cx="12" cy="12" r="2.5" />
+                        <rect x="1" y="10.5" width="22" height="3" rx="1.5" />
+                        <rect x="10.5" y="1" width="3" height="22" rx="1.5" />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                    )}
                     Add Flight
                   </button>
                 </div>
