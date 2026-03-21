@@ -53,7 +53,7 @@ export default function HomeView({
     if (debouncingId === helicopter.id) return;
     setDebouncingId(helicopter.id);
     onHelicopterIncrementFlights(helicopter);
-    setTimeout(() => setDebouncingId(null), 200);
+    setTimeout(() => setDebouncingId(null), 400);
   };
 
   return (
