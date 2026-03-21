@@ -39,12 +39,24 @@ export default function About({
       const helicopters = JSON.parse(
         localStorage.getItem("helicopters") || "[]",
       );
+      const flightEvents = JSON.parse(
+        localStorage.getItem("flightEvents") || "[]",
+      );
+      const crashEvents = JSON.parse(
+        localStorage.getItem("crashEvents") || "[]",
+      );
+      const maneuverCompletionEvents = JSON.parse(
+        localStorage.getItem("maneuverCompletionEvents") || "[]",
+      );
       const data = {
         completedManeuvers,
         helicopters,
+        flightEvents,
+        crashEvents,
+        maneuverCompletionEvents,
         themePreference,
         exportedAt: new Date().toISOString(),
-        version: 1,
+        version: 2,
       };
 
       await googleDriveService.saveToGoogleDrive(data);

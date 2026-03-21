@@ -9,8 +9,6 @@ export default function ManeuverDetail({
   showVideo,
   setShowVideo,
 }) {
-  if (!selectedManeuver) return null;
-
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -26,6 +24,8 @@ export default function ManeuverDetail({
     return () => clearTimeout(timer);
   }, [showConfetti]);
 
+  if (!selectedManeuver) return null;
+
   const handleToggleCompletion = () => {
     const wasCompleted = completedManeuvers[selectedManeuver.id];
     toggleCompletion(selectedManeuver.id);
@@ -38,14 +38,14 @@ export default function ManeuverDetail({
     const nextStatus = wasCompleted ? "incomplete" : "complete";
     trackEvent(
       `maneuver_${nextStatus}_${selectedManeuver.id}_${slugify(
-        selectedManeuver.title
+        selectedManeuver.title,
       )}`,
       {
         type: "maneuver",
         id: selectedManeuver.id,
         title: selectedManeuver.title,
         status: nextStatus,
-      }
+      },
     );
   };
 
@@ -179,8 +179,8 @@ export default function ManeuverDetail({
                       .split("/")
                       .pop()}?start=${parseInt(
                       new URLSearchParams(
-                        selectedManeuver.url.split("?")[1]
-                      ).get("t") || 0
+                        selectedManeuver.url.split("?")[1],
+                      ).get("t") || 0,
                     )}&autoplay=1`}
                     title="YouTube video player"
                     frameBorder="0"

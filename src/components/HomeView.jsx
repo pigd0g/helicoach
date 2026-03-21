@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { levels } from "../data";
+import { buildCrashRateBreakdown } from "../statistics";
+import CrashRateDonutChart from "./CrashRateDonutChart";
+import MonthlyFlightChart from "./MonthlyFlightChart";
+import ChartEmptyState from "./ChartEmptyState";
 
 function getSuggestedManeuvers(completedManeuvers, count = 5) {
   const suggestions = [];
@@ -24,10 +28,13 @@ export default function HomeView({
   handleCopyPrompt,
   onLevels,
   onFlightRecords,
+  onStatistics,
   onManeuverClick,
   onHelicopterClick,
   onHelicopterAdd,
   onHelicopterIncrementFlights,
+  flightEvents,
+  crashEvents,
 }) {
   const completed = completedManeuvers || {};
   const helicopterList = helicopters || [];
@@ -35,6 +42,10 @@ export default function HomeView({
   const totalManeuvers = levels.reduce((sum, l) => sum + l.maneuvers.length, 0);
   const totalCompleted = Object.keys(completed).length;
   const progressPct = Math.round((totalCompleted / totalManeuvers) * 100);
+  const crashRateBreakdown = useMemo(
+    () => buildCrashRateBreakdown(helicopters || []),
+    [helicopters],
+  );
 
   return (
     <div className="space-y-5">
@@ -86,7 +97,6 @@ export default function HomeView({
           <div className="text-xs text-green-200 mt-1">Log your flights</div>
         </button>
       </div>
-
       {/* Suggested Training */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
@@ -322,6 +332,77 @@ export default function HomeView({
         </button>
       </div>
 
+      <div className="space-y-4">
+        <button
+          onClick={onStatistics}
+          className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-bold text-slate-800">
+                Statistics Dashboard
+              </p>
+              <p className="mt-1 text-sm text-slate-500">
+                See monthly activity, crash ratios, maneuver progress, and
+                totals.
+              </p>
+            </div>
+            <div className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
+              Open
+            </div>
+          </div>
+        </button>
+        <div className="flex items-center justify-between gap-3 px-1">
+          <div>
+            <h2 className="text-base font-bold text-slate-800">
+              Monthly Flight Activity
+            </h2>
+            <p className="text-xs text-slate-500">
+              Cumulative flights and crashes across your fleet.
+            </p>
+          </div>
+        </div>
+
+        <MonthlyFlightChart
+          title="Fleet activity this month"
+          description="Every day of the month is shown so you can see the cumulative build in flights and crashes."
+          flightEvents={flightEvents}
+          crashEvents={crashEvents}
+          emptyTitle="No monthly flight history yet"
+          emptyMessage="Use the +1 quick actions to start building a month-by-month flying record."
+        />
+
+        {helicopterList.length > 0 ? (
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-base font-bold text-slate-800">
+                Crash Ratios
+              </h2>
+              <p className="text-xs text-slate-500">
+                Compare the overall fleet crash rate with each helicopter.
+              </p>
+            </div>
+            <div className="grid gap-4">
+              <CrashRateDonutChart entry={crashRateBreakdown.overall} />
+              {/* <div className="grid gap-4 sm:grid-cols-2">
+                {crashRateBreakdown.perHelicopter.map((entry) => (
+                  <CrashRateDonutChart
+                    key={entry.id}
+                    entry={entry}
+                    size={180}
+                    subtitle="Crash percentage for this helicopter's total recorded flights"
+                  />
+                ))}
+              </div> */}
+            </div>
+          </div>
+        ) : (
+          <ChartEmptyState
+            title="No helicopters available for crash ratios"
+            message="Add your first helicopter to see crash-rate charts for each aircraft and the overall fleet."
+          />
+        )}
+      </div>
       <p className="text-center text-xs text-gray-400">
         <a href="/privacy" className="hover:underline">
           Privacy Policy

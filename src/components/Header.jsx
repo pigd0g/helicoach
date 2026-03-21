@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Header({ view, onBack, onAbout, onFlightRecords }) {
+export default function Header({ view, onBack, onAbout }) {
   return (
     <header className="sticky top-0 z-50 bg-slate-900 text-white shadow-lg backdrop-blur-sm bg-opacity-95">
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-center relative">

@@ -1,11 +1,18 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { resizeFile } from "../imageUtils";
+import { buildCrashRateBreakdown } from "../statistics";
+import CrashRateDonutChart from "./CrashRateDonutChart";
+import MonthlyFlightChart from "./MonthlyFlightChart";
 
 export default function FlightRecordDetail({
   helicopter,
   onUpdate,
+  onIncrementFlights,
+  onIncrementCrashes,
   onDelete,
   onPreflight,
+  flightEvents,
+  crashEvents,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [flights, setFlights] = useState(helicopter.flights || 0);
@@ -16,6 +23,16 @@ export default function FlightRecordDetail({
   const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
   const photoCameraInputRef = useRef(null);
   const photoGalleryInputRef = useRef(null);
+  const crashRateEntry = useMemo(
+    () => buildCrashRateBreakdown([helicopter]).perHelicopter[0],
+    [helicopter],
+  );
+
+  useEffect(() => {
+    setFlights(helicopter.flights || 0);
+    setAvgFlightTime(helicopter.avgFlightTime || 0);
+    setCrashes(helicopter.crashes || 0);
+  }, [helicopter]);
 
   const handlePhotoCapture = async (e) => {
     const file = e.target.files?.[0];
@@ -417,7 +434,7 @@ export default function FlightRecordDetail({
                 onClick={() => {
                   const newFlights = flights + 1;
                   setFlights(newFlights);
-                  onUpdate({ flights: newFlights });
+                  onIncrementFlights(helicopter);
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold text-xs hover:bg-blue-700 transition-colors flex items-center gap-2 cursor-pointer"
               >
@@ -493,7 +510,7 @@ export default function FlightRecordDetail({
                 onClick={() => {
                   const newCrashes = crashes + 1;
                   setCrashes(newCrashes);
-                  onUpdate({ crashes: newCrashes });
+                  onIncrementCrashes(helicopter);
                 }}
                 className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold text-xs hover:bg-orange-700 transition-colors flex items-center gap-2 cursor-pointer"
               >
@@ -540,6 +557,24 @@ export default function FlightRecordDetail({
               Save Changes
             </button>
           </div>
+        )}
+      </div>
+
+      <div className="space-y-4">
+        <MonthlyFlightChart
+          title="Monthly flight history"
+          description="Cumulative flights and crashes for this helicopter, tracked by day through the selected month."
+          flightEvents={flightEvents}
+          crashEvents={crashEvents}
+          helicopterId={helicopter.id}
+          emptyTitle="No logged history for this helicopter yet"
+          emptyMessage="Use the +1 flight and crash actions to start building this helicopter's monthly history."
+        />
+        {crashRateEntry && (
+          <CrashRateDonutChart
+            entry={crashRateEntry}
+            subtitle="Crash rate based on this helicopter's total recorded flights and crashes"
+          />
         )}
       </div>
 
