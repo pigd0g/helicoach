@@ -728,6 +728,10 @@ Do Not Include Current Progress Summary`;
             onSelectHelicopter={(helicopter) =>
               navigate(`/flightrecords/helicopter/${helicopter.id}`)
             }
+            onStatistics={() => {
+              navigate("/statistics");
+              window.scrollTo(0, 0);
+            }}
           />
         )}
 

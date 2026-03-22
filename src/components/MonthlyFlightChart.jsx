@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
   Legend,
   Line,
@@ -21,6 +23,11 @@ import ChartEmptyState from "./ChartEmptyState";
 const COLORS = {
   flights: "#2563eb",
   crashes: "#dc2626",
+};
+
+const CHART_MODES = {
+  cumulative: "cumulative",
+  daily: "daily",
 };
 
 const areSameMonth = (left, right) =>
@@ -51,6 +58,26 @@ const renderTooltip = ({ active, payload, label }) => {
   );
 };
 
+const renderDailyTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) {
+    return null;
+  }
+
+  const point = payload[0]?.payload;
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-xl">
+      <p className="font-semibold text-slate-800">
+        {point?.fullLabel || `Day ${label}`}
+      </p>
+      <div className="mt-2 space-y-1">
+        <p className="text-blue-700">Flights: {point?.dailyFlights || 0}</p>
+        <p className="text-red-600">Crashes: {point?.dailyCrashes || 0}</p>
+      </div>
+    </div>
+  );
+};
+
 export default function MonthlyFlightChart({
   title,
   description,
@@ -59,6 +86,8 @@ export default function MonthlyFlightChart({
   helicopterId,
   emptyTitle,
   emptyMessage,
+  enableViewToggle = false,
+  defaultChartMode = CHART_MODES.cumulative,
 }) {
   const currentMonth = useMemo(() => getMonthStart(new Date()), []);
   const { earliestMonth, latestMonth } = useMemo(
@@ -78,6 +107,7 @@ export default function MonthlyFlightChart({
       ? latestMonth
       : currentMonth,
   );
+  const [chartMode, setChartMode] = useState(defaultChartMode);
 
   const selectedMonth = useMemo(() => {
     if (rawMonth < earliestMonth) {
@@ -102,13 +132,40 @@ export default function MonthlyFlightChart({
 
   const canGoBack = selectedMonth > earliestMonth;
   const canGoForward = selectedMonth < currentMonth;
+  const resolvedChartMode = enableViewToggle ? chartMode : defaultChartMode;
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+        <div className="space-y-3">
           <h3 className="text-base font-bold text-slate-800">{title}</h3>
           <p className="mt-1 text-xs text-slate-500">{description}</p>
+          {enableViewToggle && (
+            <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
+              <button
+                type="button"
+                onClick={() => setChartMode(CHART_MODES.cumulative)}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  resolvedChartMode === CHART_MODES.cumulative
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                Cumulative
+              </button>
+              <button
+                type="button"
+                onClick={() => setChartMode(CHART_MODES.daily)}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  resolvedChartMode === CHART_MODES.daily
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                Daily totals
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1">
           <button
@@ -185,56 +242,101 @@ export default function MonthlyFlightChart({
       <div className="mt-5 h-72">
         {monthData.hasEvents ? (
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={monthData.series}
-              margin={{ top: 8, right: 12, left: -16, bottom: 8 }}
-            >
-              <defs>
-                <linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#60a5fa" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#60a5fa" stopOpacity={0.05} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid
-                stroke="#e2e8f0"
-                strokeDasharray="3 3"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="label"
-                minTickGap={10}
-                tick={{ fill: "#64748b", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fill: "#64748b", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-                width={34}
-              />
-              <Tooltip content={renderTooltip} />
-              <Legend verticalAlign="top" height={24} iconType="circle" />
-              <Line
-                type="monotone"
-                dataKey="flights"
-                name="Flights"
-                stroke={COLORS.flights}
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 5 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="crashes"
-                name="Crashes"
-                stroke={COLORS.crashes}
-                strokeWidth={2.5}
-                dot={false}
-                activeDot={{ r: 5 }}
-              />
-            </LineChart>
+            {resolvedChartMode === CHART_MODES.daily ? (
+              <BarChart
+                data={monthData.dailySeries}
+                margin={{ top: 8, right: 12, left: -16, bottom: 8 }}
+              >
+                <CartesianGrid
+                  stroke="#e2e8f0"
+                  strokeDasharray="3 3"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="label"
+                  minTickGap={10}
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={34}
+                />
+                <Tooltip content={renderDailyTooltip} />
+                <Legend verticalAlign="top" height={24} iconType="circle" />
+                <Bar
+                  dataKey="dailyFlights"
+                  name="Flights"
+                  fill={COLORS.flights}
+                  radius={[6, 6, 0, 0]}
+                />
+                <Bar
+                  dataKey="dailyCrashes"
+                  name="Crashes"
+                  fill={COLORS.crashes}
+                  radius={[6, 6, 0, 0]}
+                />
+              </BarChart>
+            ) : (
+              <LineChart
+                data={monthData.series}
+                margin={{ top: 8, right: 12, left: -16, bottom: 8 }}
+              >
+                <defs>
+                  <linearGradient id="flightFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#60a5fa" stopOpacity={0.3} />
+                    <stop
+                      offset="100%"
+                      stopColor="#60a5fa"
+                      stopOpacity={0.05}
+                    />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  stroke="#e2e8f0"
+                  strokeDasharray="3 3"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="label"
+                  minTickGap={10}
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={34}
+                />
+                <Tooltip content={renderTooltip} />
+                <Legend verticalAlign="top" height={24} iconType="circle" />
+                <Line
+                  type="monotone"
+                  dataKey="flights"
+                  name="Flights"
+                  stroke={COLORS.flights}
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="crashes"
+                  name="Crashes"
+                  stroke={COLORS.crashes}
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                />
+              </LineChart>
+            )}
           </ResponsiveContainer>
         ) : (
           <ChartEmptyState

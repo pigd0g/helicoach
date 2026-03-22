@@ -600,15 +600,16 @@ export default function FlightRecordDetail({
         )}
       </div>
 
-      <div className="space-y-4">
+      <div className="grid gap-4 xl:items-start">
         <MonthlyFlightChart
           title="Monthly flight history"
-          description="Cumulative flights and crashes for this helicopter, tracked by day through the selected month."
+          description="Toggle between cumulative history and daily totals for this helicopter while keeping the full selected month visible."
           flightEvents={flightEvents}
           crashEvents={crashEvents}
           helicopterId={helicopter.id}
           emptyTitle="No logged history for this helicopter yet"
           emptyMessage="Use the +1 flight and crash actions to start building this helicopter's monthly history."
+          enableViewToggle
         />
         {crashRateEntry && (
           <CrashRateDonutChart

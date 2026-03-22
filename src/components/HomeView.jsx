@@ -383,18 +383,21 @@ export default function HomeView({
               Monthly Flight Activity
             </h2>
             <p className="text-xs text-slate-500">
-              Cumulative flights and crashes across your fleet.
+              A quick snapshot of your monthly flight history and progress over
+              time. Dive into the statistics dashboard for a deeper analysis of
+              your flying patterns and crash ratios.
             </p>
           </div>
         </div>
 
         <MonthlyFlightChart
-          title="Fleet activity this month"
-          description="Every day of the month is shown so you can see the cumulative build in flights and crashes."
+          title="Flight activity this month"
+          description="Switch between cumulative progress and daily totals."
           flightEvents={flightEvents}
           crashEvents={crashEvents}
           emptyTitle="No monthly flight history yet"
           emptyMessage="Use the +1 quick actions to start building a month-by-month flying record."
+          enableViewToggle
         />
 
         {helicopterList.length > 0 ? (
