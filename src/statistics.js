@@ -244,7 +244,7 @@ const getEventMonthRange = (...eventCollections) => {
   };
 };
 
-const buildMonthlyCumulativeSeries = ({
+const buildMonthlyActivitySeries = ({
   monthDate,
   flightEvents,
   crashEvents,
@@ -279,14 +279,8 @@ const buildMonthlyCumulativeSeries = ({
     crashesByDay.set(day, (crashesByDay.get(day) || 0) + 1);
   });
 
-  let cumulativeFlights = 0;
-  let cumulativeCrashes = 0;
-
-  const series = Array.from({ length: daysInMonth }, (_, index) => {
+  const dailySeries = Array.from({ length: daysInMonth }, (_, index) => {
     const day = index + 1;
-    cumulativeFlights += flightsByDay.get(day) || 0;
-    cumulativeCrashes += crashesByDay.get(day) || 0;
-
     const date = new Date(
       normalizedMonth.getFullYear(),
       normalizedMonth.getMonth(),
@@ -297,8 +291,6 @@ const buildMonthlyCumulativeSeries = ({
       day,
       label: `${day}`,
       fullLabel: `${WEEKDAY_FORMATTER.format(date)} ${day}`,
-      flights: cumulativeFlights,
-      crashes: cumulativeCrashes,
       dailyFlights: flightsByDay.get(day) || 0,
       dailyCrashes: crashesByDay.get(day) || 0,
     };
@@ -309,12 +301,55 @@ const buildMonthlyCumulativeSeries = ({
     monthLabel: formatMonthYear(normalizedMonth),
     monthKey: targetMonthKey,
     daysInMonth,
-    series,
+    dailySeries,
     hasEvents: filteredFlights.length > 0 || filteredCrashes.length > 0,
     totals: {
       flights: filteredFlights.length,
       crashes: filteredCrashes.length,
     },
+  };
+};
+
+const buildMonthlyCumulativeSeries = ({
+  monthDate,
+  flightEvents,
+  crashEvents,
+  helicopterId,
+}) => {
+  const activityData = buildMonthlyActivitySeries({
+    monthDate,
+    flightEvents,
+    crashEvents,
+    helicopterId,
+  });
+
+  let cumulativeFlights = 0;
+  let cumulativeCrashes = 0;
+
+  const series = activityData.dailySeries.map((entry) => {
+    cumulativeFlights += entry.dailyFlights;
+    cumulativeCrashes += entry.dailyCrashes;
+
+    return {
+      day: entry.day,
+      label: entry.label,
+      fullLabel: entry.fullLabel,
+      flights: cumulativeFlights,
+      crashes: cumulativeCrashes,
+      dailyFlights: entry.dailyFlights,
+      dailyCrashes: entry.dailyCrashes,
+    };
+  });
+
+  return {
+    monthDate: activityData.monthDate,
+    monthLabel: activityData.monthLabel,
+    monthKey: activityData.monthKey,
+    daysInMonth: activityData.daysInMonth,
+    series,
+    dailySeries: activityData.dailySeries,
+    hasEvents: activityData.hasEvents,
+    totals: activityData.totals,
   };
 };
 
@@ -493,7 +528,7 @@ const buildRecentActivity = ({
 
 const buildMonthlyTotalSeries = (events, formatter) => {
   const countsByMonth = new Map();
-  events.forEach((event) => {
+  safeArray(events).forEach((event) => {
     const monthKey = getMonthKey(event.occurredAt);
     if (!monthKey) {
       return;
@@ -513,6 +548,64 @@ const buildMonthlyTotalSeries = (events, formatter) => {
         title: formatter ? formatter(monthKey, total) : formatMonthYear(date),
       };
     });
+};
+
+const buildHelicopterMonthlyFlightSeries = ({ helicopters, flightEvents }) => {
+  const helicoptersById = new Map(
+    sanitizeHelicopters(helicopters).map((helicopter) => [
+      helicopter.id,
+      helicopter,
+    ]),
+  );
+  const monthlyCountsByHelicopter = new Map();
+
+  sanitizeFlightEvents(flightEvents).forEach((event) => {
+    if (!helicoptersById.has(event.helicopterId)) {
+      return;
+    }
+
+    const monthKey = getMonthKey(event.occurredAt);
+    if (!monthKey) {
+      return;
+    }
+
+    if (!monthlyCountsByHelicopter.has(event.helicopterId)) {
+      monthlyCountsByHelicopter.set(event.helicopterId, new Map());
+    }
+
+    const monthlyCounts = monthlyCountsByHelicopter.get(event.helicopterId);
+    monthlyCounts.set(monthKey, (monthlyCounts.get(monthKey) || 0) + 1);
+  });
+
+  return sanitizeHelicopters(helicopters).map((helicopter) => {
+    const monthlyCounts =
+      monthlyCountsByHelicopter.get(helicopter.id) || new Map();
+    const series = Array.from(monthlyCounts.entries())
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([monthKey, total]) => {
+        const [year, month] = monthKey.split("-").map(Number);
+        const monthDate = new Date(year, month - 1, 1);
+
+        return {
+          monthKey,
+          monthDate,
+          monthLabel: `${formatShortMonth(monthDate)} ${String(year).slice(-2)}`,
+          flights: total,
+          title: formatMonthYear(monthDate),
+        };
+      });
+
+    return {
+      id: helicopter.id,
+      title: helicopter.title,
+      photo: helicopter.photo,
+      flights: helicopter.flights,
+      crashes: helicopter.crashes,
+      avgFlightTime: helicopter.avgFlightTime,
+      hasEvents: series.length > 0,
+      series,
+    };
+  });
 };
 
 const buildSummaryMetrics = ({
@@ -568,7 +661,9 @@ export {
   STORAGE_KEYS,
   buildCrashRateBreakdown,
   buildHelicopterTotals,
+  buildHelicopterMonthlyFlightSeries,
   buildManeuverCompletionLevelData,
+  buildMonthlyActivitySeries,
   buildMonthlyCompletionSeries,
   buildMonthlyCumulativeSeries,
   buildMonthlyTotalSeries,

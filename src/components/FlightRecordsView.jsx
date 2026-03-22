@@ -4,6 +4,7 @@ export default function FlightRecordsView({
   helicopters,
   onAddNew,
   onSelectHelicopter,
+  onStatistics,
 }) {
   return (
     <div className="space-y-6">
@@ -34,6 +35,25 @@ export default function FlightRecordsView({
           <path d="M8 12h8" />
         </svg>
         Add New Helicopter
+      </button>
+
+      <button
+        onClick={onStatistics}
+        className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-bold text-slate-800">
+              Statistics Dashboard
+            </p>
+            <p className="mt-1 text-sm text-slate-500">
+              See monthly activity, crash ratios, maneuver progress, and totals.
+            </p>
+          </div>
+          <div className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
+            Open
+          </div>
+        </div>
       </button>
 
       {helicopters.length === 0 ? (

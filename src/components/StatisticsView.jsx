@@ -228,6 +228,95 @@ function MonthlyCompletionChart({ maneuverCompletionEvents }) {
   );
 }
 
+function HelicopterMonthlyFlightsCard({
+  entry,
+  onSelect,
+  flightEvents,
+  crashEvents,
+}) {
+  const avgFlightTime = Number(entry?.avgFlightTime || 0);
+
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          {entry.photo ? (
+            <img
+              src={entry.photo}
+              alt={entry.title}
+              className="h-14 w-14 rounded-full object-cover border border-slate-200 shrink-0"
+            />
+          ) : (
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xl text-slate-500">
+              🚁
+            </div>
+          )}
+          <div className="min-w-0">
+            <p className="text-base font-bold text-slate-800 truncate">
+              {entry.title}
+            </p>
+            <p className="mt-1 text-xs text-slate-500">
+              Full-month history and crash rate for this helicopter.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => onSelect(entry)}
+          className="rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-slate-700 cursor-pointer"
+        >
+          Open details
+        </button>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="rounded-xl bg-blue-50 px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-blue-700">
+            Flights
+          </p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">
+            {entry.flights}
+          </p>
+        </div>
+        <div className="rounded-xl bg-red-50 px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-red-600">
+            Crashes
+          </p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">
+            {entry.crashes}
+          </p>
+        </div>
+        <div className="rounded-xl bg-slate-50 px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+            Avg flight time
+          </p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">
+            {avgFlightTime.toFixed(1)} min
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-5  xl:items-start">
+        <MonthlyFlightChart
+          title="Monthly flight history"
+          description="Use the month controls and toggle to inspect cumulative history or daily totals for this helicopter."
+          flightEvents={flightEvents}
+          crashEvents={crashEvents}
+          helicopterId={entry.id}
+          emptyTitle="No logged history for this helicopter yet"
+          emptyMessage="Flight and crash events for this helicopter will appear here once activity is recorded."
+          enableViewToggle
+        />
+        <CrashRateDonutChart
+          entry={entry}
+          size={180}
+          subtitle="Crash percentage for this helicopter's recorded flights"
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function StatisticsView({
   levels,
   completedManeuvers,
@@ -342,6 +431,31 @@ export default function StatisticsView({
       }));
   }, [monthlyCompletions, monthlyCrashes, monthlyFlights]);
 
+  const helicopterMonthlyCards = useMemo(() => {
+    const crashRateById = new Map(
+      crashRateBreakdown.perHelicopter.map((entry) => [entry.id, entry]),
+    );
+
+    return helicopterTotals
+      .map((entry) => {
+        const crashRateEntry = crashRateById.get(entry.id);
+        const helicopter = helicopterMap.get(entry.id);
+
+        return {
+          ...entry,
+          photo: helicopter?.photo || null,
+          safeLandings:
+            crashRateEntry?.safeLandings ??
+            Math.max(entry.flights - entry.crashes, 0),
+          crashRate: crashRateEntry?.crashRate ?? 0,
+        };
+      })
+      .sort(
+        (left, right) =>
+          right.flights - left.flights || right.crashes - left.crashes,
+      );
+  }, [crashRateBreakdown.perHelicopter, helicopterMap, helicopterTotals]);
+
   return (
     <div className="space-y-6 pb-24">
       <div className="rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-blue-900 p-6 text-white shadow-xl">
@@ -355,7 +469,7 @@ export default function StatisticsView({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4">
         <StatCard
           label="Helicopters"
           value={summary.totalHelicopters}
@@ -381,16 +495,28 @@ export default function StatisticsView({
         />
       </div>
 
-      <MonthlyFlightChart
-        title="Fleet activity timeline"
-        description="Daily cumulative activity for flights and crashes across every helicopter in the selected month."
-        flightEvents={flightEvents}
-        crashEvents={crashEvents}
-        emptyTitle="No fleet activity logged yet"
-        emptyMessage="Use the +1 buttons on the home page or helicopter detail screens to start tracking monthly activity."
-      />
+      <div className="grid gap-5 lg:grid-cols-1 xl:grid-cols-1">
+        <MonthlyFlightChart
+          title="Fleet accumulation timeline"
+          description="Cumulative flights and crashes across every helicopter through the selected month."
+          flightEvents={flightEvents}
+          crashEvents={crashEvents}
+          emptyTitle="No fleet activity logged yet"
+          emptyMessage="Use the +1 buttons on the home page or helicopter detail screens to start tracking monthly activity."
+        />
 
-      <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+        <MonthlyFlightChart
+          title="Fleet daily activity"
+          description="Daily flight and crash totals across every helicopter in the selected month."
+          flightEvents={flightEvents}
+          crashEvents={crashEvents}
+          emptyTitle="No fleet activity logged yet"
+          emptyMessage="Use the +1 buttons on the home page or helicopter detail screens to start tracking monthly activity."
+          defaultChartMode="daily"
+        />
+      </div>
+
+      <div className="space-y-4">
         <MonthlyCompletionChart
           maneuverCompletionEvents={maneuverCompletionEvents}
         />
@@ -484,202 +610,202 @@ export default function StatisticsView({
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="space-y-4">
-          <SectionHeader
-            title="Helicopter comparisons"
-            description="Compare total flights and crashes for each helicopter. Tap a helicopter card to open its detail page."
-          />
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="h-80">
-              {helicopterTotals.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={helicopterTotals}
-                    margin={{ top: 8, right: 8, left: -8, bottom: 8 }}
-                  >
-                    <CartesianGrid
-                      stroke="#e2e8f0"
-                      strokeDasharray="3 3"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="title"
-                      tick={{ fill: "#64748b", fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                      interval={0}
-                      angle={-18}
-                      textAnchor="end"
-                      height={56}
-                    />
-                    <YAxis
-                      allowDecimals={false}
-                      tick={{ fill: "#64748b", fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                      width={34}
-                    />
-                    <Tooltip
-                      content={({ active, payload, label }) => {
-                        if (!active || !payload?.length) {
-                          return null;
-                        }
-                        const point = payload[0]?.payload;
-                        return (
-                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-xl">
-                            <p className="font-semibold text-slate-800">
-                              {label}
-                            </p>
-                            <p className="mt-2 text-blue-700">
-                              Flights: {point?.flights || 0}
-                            </p>
-                            <p className="text-red-600">
-                              Crashes: {point?.crashes || 0}
-                            </p>
-                            <p className="text-slate-500">
-                              Average flight time:{" "}
-                              {(point?.avgFlightTime || 0).toFixed(1)} min
-                            </p>
-                          </div>
-                        );
-                      }}
-                    />
-                    <Legend iconType="circle" />
-                    <Bar
-                      dataKey="flights"
-                      name="Flights"
-                      fill="#2563eb"
-                      radius={[8, 8, 0, 0]}
-                    />
-                    <Bar
-                      dataKey="crashes"
-                      name="Crashes"
-                      fill="#dc2626"
-                      radius={[8, 8, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <ChartEmptyState
-                  title="No helicopters to compare"
-                  message="Add helicopters in Flight Records to unlock usage comparisons and crash-rate charts."
-                  compact
-                />
-              )}
-            </div>
-          </div>
-
-          {helicopterTotals.length > 0 && (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {crashRateBreakdown.perHelicopter.map((entry) => (
-                <button
-                  key={entry.id}
-                  type="button"
-                  onClick={() => {
-                    const helicopter = helicopterMap.get(entry.id);
-                    if (helicopter) {
-                      onHelicopterSelect(helicopter);
-                    }
-                  }}
-                  className="text-left cursor-pointer"
+      <div className="space-y-4">
+        <SectionHeader
+          title="Helicopter comparisons"
+          description="Compare total flights and crashes for each helicopter, then review monthly history in the detailed cards below."
+        />
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="h-80">
+            {helicopterTotals.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={helicopterTotals}
+                  margin={{ top: 8, right: 8, left: -8, bottom: 8 }}
                 >
-                  <CrashRateDonutChart
-                    entry={entry}
-                    size={180}
-                    subtitle="Open the helicopter detail page for its monthly history"
+                  <CartesianGrid
+                    stroke="#e2e8f0"
+                    strokeDasharray="3 3"
+                    vertical={false}
                   />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          <SectionHeader
-            title="Level progress"
-            description="Current completion status for every training level in the syllabus."
-          />
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="space-y-4">
-              {levelProgress.map((level) => (
-                <div key={level.id}>
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-slate-800">
-                        {level.title}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {level.completed}/{level.total} maneuvers completed
-                      </p>
-                    </div>
-                    <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-                      {level.percentage}%
-                    </div>
-                  </div>
-                  <div className="h-2 rounded-full bg-slate-100">
-                    <div
-                      className="h-2 rounded-full bg-blue-600"
-                      style={{ width: `${level.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <SectionHeader
-            title="Recent activity"
-            description="Latest timestamped events recorded across flights, crashes, and maneuver completions."
-          />
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            {recentActivity.length > 0 ? (
-              <ul className="space-y-3">
-                {recentActivity.map((item) => (
-                  <li
-                    key={`${item.type}-${item.id}`}
-                    className="rounded-xl bg-slate-50 px-4 py-3"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-800">
-                          {item.title}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {item.subtitle}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p
-                          className={`text-xs font-semibold uppercase tracking-[0.2em] ${
-                            item.type === "flight"
-                              ? "text-blue-700"
-                              : item.type === "crash"
-                                ? "text-red-600"
-                                : "text-green-700"
-                          }`}
-                        >
-                          {item.type}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {item.occurredDateLabel}
-                        </p>
-                        <p className="text-xs text-slate-400">
-                          {item.occurredTimeLabel}
-                        </p>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                  <XAxis
+                    dataKey="title"
+                    tick={{ fill: "#64748b", fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                    interval={0}
+                    angle={-18}
+                    textAnchor="end"
+                    height={56}
+                  />
+                  <YAxis
+                    allowDecimals={false}
+                    tick={{ fill: "#64748b", fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={34}
+                  />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload?.length) {
+                        return null;
+                      }
+                      const point = payload[0]?.payload;
+                      return (
+                        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-xl">
+                          <p className="font-semibold text-slate-800">
+                            {label}
+                          </p>
+                          <p className="mt-2 text-blue-700">
+                            Flights: {point?.flights || 0}
+                          </p>
+                          <p className="text-red-600">
+                            Crashes: {point?.crashes || 0}
+                          </p>
+                          <p className="text-slate-500">
+                            Average flight time:{" "}
+                            {(point?.avgFlightTime || 0).toFixed(1)} min
+                          </p>
+                        </div>
+                      );
+                    }}
+                  />
+                  <Legend iconType="circle" />
+                  <Bar
+                    dataKey="flights"
+                    name="Flights"
+                    fill="#2563eb"
+                    radius={[8, 8, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="crashes"
+                    name="Crashes"
+                    fill="#dc2626"
+                    radius={[8, 8, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
             ) : (
               <ChartEmptyState
-                title="No recent activity yet"
-                message="As you log flights and complete maneuvers, your latest activity will appear here."
+                title="No helicopters to compare"
+                message="Add helicopters in Flight Records to unlock usage comparisons and crash-rate charts."
                 compact
               />
             )}
           </div>
+        </div>
+
+        {helicopterMonthlyCards.length > 0 ? (
+          <div className="grid gap-4 lg:grid-cols-1 xl:grid-cols-1">
+            {helicopterMonthlyCards.map((entry) => (
+              <HelicopterMonthlyFlightsCard
+                key={entry.id}
+                entry={entry}
+                flightEvents={flightEvents}
+                crashEvents={crashEvents}
+                onSelect={(selectedEntry) => {
+                  const helicopter = helicopterMap.get(selectedEntry.id);
+                  if (helicopter) {
+                    onHelicopterSelect(helicopter);
+                  }
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <ChartEmptyState
+            title="No helicopter flight history yet"
+            message="Once helicopters have logged flights, each aircraft will get its own monthly history card here."
+          />
+        )}
+      </div>
+
+      <div className="space-y-4">
+        <SectionHeader
+          title="Level progress"
+          description="Current completion status for every training level in the syllabus."
+        />
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="space-y-4">
+            {levelProgress.map((level) => (
+              <div key={level.id}>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">
+                      {level.title}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {level.completed}/{level.total} maneuvers completed
+                    </p>
+                  </div>
+                  <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                    {level.percentage}%
+                  </div>
+                </div>
+                <div className="h-2 rounded-full bg-slate-100">
+                  <div
+                    className="h-2 rounded-full bg-blue-600"
+                    style={{ width: `${level.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <SectionHeader
+          title="Recent activity"
+          description="Latest timestamped events recorded across flights, crashes, and maneuver completions."
+        />
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          {recentActivity.length > 0 ? (
+            <ul className="space-y-3">
+              {recentActivity.map((item) => (
+                <li
+                  key={`${item.type}-${item.id}`}
+                  className="rounded-xl bg-slate-50 px-4 py-3"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={`text-xs font-semibold uppercase tracking-[0.2em] ${
+                          item.type === "flight"
+                            ? "text-blue-700"
+                            : item.type === "crash"
+                              ? "text-red-600"
+                              : "text-green-700"
+                        }`}
+                      >
+                        {item.type}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {item.occurredDateLabel}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        {item.occurredTimeLabel}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ChartEmptyState
+              title="No recent activity yet"
+              message="As you log flights and complete maneuvers, your latest activity will appear here."
+              compact
+            />
+          )}
         </div>
       </div>
     </div>
