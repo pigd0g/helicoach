@@ -15,6 +15,7 @@ import PreflightChecklist from "./components/PreflightChecklist";
 import TermsOfService from "./components/TermsOfService";
 import PrivacyNotice from "./components/PrivacyNotice";
 import StatisticsView from "./components/StatisticsView";
+import { useDialogs } from "./components/modals/DialogProvider";
 import {
   STORAGE_KEYS,
   clampNumber,
@@ -55,6 +56,7 @@ const getSystemThemeMediaQuery = () =>
 const getSystemPrefersDark = () => getSystemThemeMediaQuery()?.matches ?? false;
 
 function App() {
+  const { showAlert } = useDialogs();
   const [showVideo, setShowVideo] = useState(false);
   const [showVideoMove, setShowVideoMove] = useState(false);
   const [currentTipIndex, setCurrentTipIndex] = useState(() =>
@@ -414,7 +416,7 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  const handleCopyPrompt = () => {
+  const handleCopyPrompt = async () => {
     const allManeuvers = levels.flatMap((l) =>
       l.maneuvers.map(
         (m) =>
@@ -458,9 +460,18 @@ You can ask the user if they would like a plan for more batteries in this sessio
 
 Do Not Include Current Progress Summary`;
 
-    navigator.clipboard.writeText(prompt).then(() => {
-      alert("Prompt copied to clipboard! Paste it into your AI assistant.");
-    });
+    try {
+      await navigator.clipboard.writeText(prompt);
+      await showAlert({
+        title: "Prompt Copied",
+        message: "Prompt copied to clipboard! Paste it into your AI assistant.",
+      });
+    } catch {
+      await showAlert({
+        title: "Copy Failed",
+        message: "Unable to copy prompt to clipboard. Please try again.",
+      });
+    }
   };
 
   const goBack = () => {
@@ -508,7 +519,7 @@ Do Not Include Current Progress Summary`;
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = JSON.parse(e.target?.result);
         let hasValidData = false;
@@ -566,14 +577,22 @@ Do Not Include Current Progress Summary`;
         }
 
         if (hasValidData) {
-          alert("Progress imported successfully!");
+          await showAlert({
+            title: "Import Complete",
+            message: "Progress imported successfully!",
+          });
         } else {
-          alert(
-            "Invalid file format. Please select a valid HeliCoach export file.",
-          );
+          await showAlert({
+            title: "Import Failed",
+            message:
+              "Invalid file format. Please select a valid HeliCoach export file.",
+          });
         }
       } catch {
-        alert("Error reading file. Please select a valid JSON file.");
+        await showAlert({
+          title: "Import Failed",
+          message: "Error reading file. Please select a valid JSON file.",
+        });
       }
     };
     reader.readAsText(file);

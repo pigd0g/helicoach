@@ -1,8 +1,10 @@
 import React, { useState, useRef } from "react";
 import { slugify, trackEvent } from "../analytics";
 import { resizeFile } from "../imageUtils";
+import { useDialogs } from "./modals/DialogProvider";
 
 export default function FlightRecordNew({ onSave, onCancel }) {
+  const { showAlert } = useDialogs();
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -21,17 +23,23 @@ export default function FlightRecordNew({ onSave, onCancel }) {
       setPhotoPreview(resizedImage);
     } catch (error) {
       console.error("Error resizing image:", error);
-      alert("Failed to process image. Please try again.");
+      await showAlert({
+        title: "Photo Error",
+        message: "Failed to process image. Please try again.",
+      });
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title.trim()) {
-      alert("Please enter a helicopter title.");
+      await showAlert({
+        title: "Missing Name",
+        message: "Please enter a helicopter title.",
+      });
       return;
     }
 

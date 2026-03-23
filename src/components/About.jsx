@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import googleDriveService from "../services/googleDrive";
+import { useDialogs } from "./modals/DialogProvider";
 
 const themeOptions = [
   { value: "light", label: "Light" },
@@ -14,6 +15,7 @@ export default function About({
   effectiveTheme,
   onThemeChange,
 }) {
+  const { showAlert, showConfirm } = useDialogs();
   const [driveLoading, setDriveLoading] = useState(false);
   const [driveMessage, setDriveMessage] = useState("");
 
@@ -22,9 +24,23 @@ export default function About({
       !import.meta.env.VITE_GOOGLE_CLIENT_ID ||
       !import.meta.env.VITE_GOOGLE_API_KEY
     ) {
-      alert(
-        "Google Drive integration is not configured. Please set up environment variables.",
-      );
+      await showAlert({
+        title: "Google Drive Not Configured",
+        message:
+          "Google Drive integration is not configured. Please set up environment variables.",
+      });
+      return;
+    }
+
+    const confirmed = await showConfirm({
+      title: "Backup to Google Drive",
+      message:
+        "This will overwrite your cloud settings with your current local settings. Continue?",
+      confirmLabel: "Backup",
+      cancelLabel: "Cancel",
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -79,17 +95,23 @@ export default function About({
       !import.meta.env.VITE_GOOGLE_CLIENT_ID ||
       !import.meta.env.VITE_GOOGLE_API_KEY
     ) {
-      alert(
-        "Google Drive integration is not configured. Please set up environment variables.",
-      );
+      await showAlert({
+        title: "Google Drive Not Configured",
+        message:
+          "Google Drive integration is not configured. Please set up environment variables.",
+      });
       return;
     }
 
-    if (
-      !confirm(
-        "This will replace your current progress with the backup from Google Drive. Continue?",
-      )
-    ) {
+    const confirmed = await showConfirm({
+      title: "Restore from Google Drive",
+      message:
+        "This will overwrite your local settings with your Google Drive backup. Continue?",
+      confirmLabel: "Restore",
+      cancelLabel: "Cancel",
+    });
+
+    if (!confirmed) {
       return;
     }
 

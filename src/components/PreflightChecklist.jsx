@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { slugify, trackEvent } from "../analytics";
+import { useDialogs } from "./modals/DialogProvider";
 
 const checklistSections = [
   {
@@ -61,6 +62,7 @@ export default function PreflightChecklist({
   onComplete,
   onCancel,
 }) {
+  const { showAlert } = useDialogs();
   const [checkedItems, setCheckedItems] = useState({});
 
   const toggleItem = (sectionIndex, itemIndex) => {
@@ -90,11 +92,13 @@ export default function PreflightChecklist({
     return Math.round((getCheckedCount() / getTotalItems()) * 100);
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (!isComplete()) {
-      alert(
-        "Please complete all checklist items before finishing the preflight check.",
-      );
+      await showAlert({
+        title: "Checklist Incomplete",
+        message:
+          "Please complete all checklist items before finishing the preflight check.",
+      });
       return;
     }
 

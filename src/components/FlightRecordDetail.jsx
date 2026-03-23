@@ -3,6 +3,7 @@ import { resizeFile } from "../imageUtils";
 import { buildCrashRateBreakdown } from "../statistics";
 import CrashRateDonutChart from "./CrashRateDonutChart";
 import MonthlyFlightChart from "./MonthlyFlightChart";
+import { useDialogs } from "./modals/DialogProvider";
 
 export default function FlightRecordDetail({
   helicopter,
@@ -14,6 +15,7 @@ export default function FlightRecordDetail({
   flightEvents,
   crashEvents,
 }) {
+  const { showAlert, showConfirm } = useDialogs();
   const [isEditing, setIsEditing] = useState(false);
   const [flights, setFlights] = useState(helicopter.flights || 0);
   const [avgFlightTime, setAvgFlightTime] = useState(
@@ -45,7 +47,10 @@ export default function FlightRecordDetail({
       onUpdate({ photo: resizedImage });
     } catch (error) {
       console.error("Error resizing image:", error);
-      alert("Failed to process image. Please try again.");
+      await showAlert({
+        title: "Photo Error",
+        message: "Failed to process image. Please try again.",
+      });
     } finally {
       setIsProcessingPhoto(false);
       e.target.value = "";
@@ -121,12 +126,15 @@ export default function FlightRecordDetail({
 
   const preflightStatus = getPreflightStatus();
 
-  const handleDelete = () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete "${helicopter.title}"? This cannot be undone.`,
-      )
-    ) {
+  const handleDelete = async () => {
+    const confirmed = await showConfirm({
+      title: "Delete Helicopter",
+      message: `Are you sure you want to delete "${helicopter.title}"? This cannot be undone.`,
+      confirmLabel: "Delete",
+      cancelLabel: "Cancel",
+    });
+
+    if (confirmed) {
       onDelete();
     }
   };
