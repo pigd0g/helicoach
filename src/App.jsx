@@ -652,6 +652,10 @@ Do Not Include Current Progress Summary`;
       <Header
         view={view}
         onBack={goBack}
+        onStatistics={() => {
+          navigate("/statistics");
+          window.scrollTo(0, 0);
+        }}
         onAbout={() => {
           navigate("/about");
           window.scrollTo(0, 0);

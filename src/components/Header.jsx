@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Header({ view, onBack, onAbout }) {
+export default function Header({ view, onBack, onAbout, onStatistics }) {
   return (
     <header className="sticky top-0 z-50 bg-slate-900 text-white shadow-lg backdrop-blur-sm bg-opacity-95">
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-center relative">
@@ -33,6 +33,32 @@ export default function Header({ view, onBack, onAbout }) {
           <h1 className="text-lg font-bold tracking-wide">HeliCoach</h1>
         </a>
         <div className="absolute right-4 flex items-center gap-1">
+          {view !== "statistics" && (
+            <button
+              className="p-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 cursor-pointer"
+              onClick={onStatistics}
+              aria-label="Statistics"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 3v18h18" />
+                <path d="M7 15l4-4 3 3 5-6" />
+                <circle cx="7" cy="15" r="1" />
+                <circle cx="11" cy="11" r="1" />
+                <circle cx="14" cy="14" r="1" />
+                <circle cx="19" cy="8" r="1" />
+              </svg>
+            </button>
+          )}
           {view !== "about" && (
             <button
               className="p-2 text-slate-300 hover:text-white active:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 cursor-pointer"
