@@ -28,7 +28,9 @@ import {
   sanitizeFlightEvents,
   sanitizeHelicopters,
   sanitizeManeuverCompletionEvents,
+  sanitizeSessionHistory,
 } from "./statistics";
+import SessionPlannerView from "./components/SessionPlannerView";
 
 const THEME_STORAGE_KEY = "themePreference";
 const VALID_THEME_PREFERENCES = new Set(["light", "dark", "system"]);
@@ -83,6 +85,9 @@ function App() {
       readStorageJson(STORAGE_KEYS.maneuverCompletionEvents, []),
     ),
   );
+  const [sessionHistory, setSessionHistory] = useState(() =>
+    sanitizeSessionHistory(readStorageJson(STORAGE_KEYS.sessionHistory, [])),
+  );
   const [themePreference, setThemePreference] = useState(() =>
     sanitizeThemePreference(localStorage.getItem(THEME_STORAGE_KEY)),
   );
@@ -123,6 +128,13 @@ function App() {
       JSON.stringify(maneuverCompletionEvents),
     );
   }, [maneuverCompletionEvents]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      STORAGE_KEYS.sessionHistory,
+      JSON.stringify(sessionHistory),
+    );
+  }, [sessionHistory]);
 
   useEffect(() => {
     localStorage.setItem(THEME_STORAGE_KEY, themePreference);
@@ -233,6 +245,10 @@ function App() {
 
         if (parts[0] === "statistics") {
           return { ...defaultState, view: "statistics" };
+        }
+
+        if (parts[0] === "session") {
+          return { ...defaultState, view: "session" };
         }
 
         if (parts[0] === "level") {
@@ -706,6 +722,10 @@ Do Not Include Current Progress Summary`;
             onHelicopterIncrementFlights={incrementHelicopterFlights}
             flightEvents={flightEvents}
             crashEvents={crashEvents}
+            onPlanSession={() => {
+              navigate("/session");
+              window.scrollTo(0, 0);
+            }}
           />
         )}
 
@@ -802,6 +822,15 @@ Do Not Include Current Progress Summary`;
               navigate(`/flightrecords/helicopter/${helicopter.id}`);
               window.scrollTo(0, 0);
             }}
+          />
+        )}
+
+        {view === "session" && (
+          <SessionPlannerView
+            completedManeuvers={completedManeuvers}
+            maneuverCompletionEvents={maneuverCompletionEvents}
+            levels={levels}
+            setSessionHistory={setSessionHistory}
           />
         )}
 

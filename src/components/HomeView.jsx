@@ -35,6 +35,7 @@ export default function HomeView({
   onHelicopterIncrementFlights,
   flightEvents,
   crashEvents,
+  onPlanSession,
 }) {
   const completed = completedManeuvers || {};
   const helicopterList = helicopters || [];
@@ -356,6 +357,37 @@ export default function HomeView({
           Copy Coach Prompt
         </button>
       </div>
+
+      {/* Training Session Planner */}
+      {onPlanSession && (
+        <button
+          onClick={onPlanSession}
+          className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl p-5 text-center font-semibold shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M8 6h13" />
+            <path d="M8 12h13" />
+            <path d="M8 18h13" />
+            <path d="M3 6h.01" />
+            <path d="M3 12h.01" />
+            <path d="M3 18h.01" />
+          </svg>
+          <div>
+            <div className="text-sm font-bold">Plan Training Session</div>
+            <div className="text-xs text-blue-200 mt-0.5">Get a 3-battery session tailored to your progress</div>
+          </div>
+        </button>
+      )}
 
       <div className="space-y-4">
         <button

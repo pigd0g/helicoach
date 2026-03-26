@@ -2,6 +2,7 @@ const STORAGE_KEYS = {
   flightEvents: "flightEvents",
   crashEvents: "crashEvents",
   maneuverCompletionEvents: "maneuverCompletionEvents",
+  sessionHistory: "sessionHistory",
 };
 
 const MONTH_LABEL_FORMATTER = new Intl.DateTimeFormat(undefined, {
@@ -657,8 +658,149 @@ const sanitizeCrashEvents = (value) =>
 const sanitizeManeuverCompletionEvents = (value) =>
   sanitizeEventArray(value, sanitizeManeuverCompletionEvent);
 
+const sanitizeSessionHistory = (value) =>
+  safeArray(value).map(sanitizeSessionRecord).filter(Boolean);
+
+const sanitizeSessionRecord = (value) => {
+  if (!isObject(value) || !value.id || !safeDate(value.startedAt)) {
+    return null;
+  }
+  return {
+    id: typeof value.id === "string" ? value.id : null,
+    startedAt: new Date(value.startedAt).toISOString(),
+    completedAt: safeDate(value.completedAt)?.toISOString() || null,
+    durationSeconds: clampNumber(value.durationSeconds),
+    batteries: safeArray(value.batteries).map((battery) => ({
+      label: typeof battery.label === "string" ? battery.label : "",
+      maneuvers: safeArray(battery.maneuvers).map((m) => ({
+        id: typeof m.id === "string" ? m.id : "",
+        title: typeof m.title === "string" ? m.title : "",
+        url: typeof m.url === "string" ? m.url : "",
+        completed: m.completed === true,
+        skipped: m.skipped === true,
+      })),
+    })),
+  };
+};
+
+const createSessionEvent = (session) => {
+  const now = new Date().toISOString();
+  return {
+    id:
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `session-${now}-${Math.random().toString(36).slice(2, 10)}`,
+    startedAt: now,
+    completedAt: now,
+    durationSeconds: 0,
+    batteries: session.batteries.map((battery) => ({
+      label: battery.label,
+      maneuvers: battery.maneuvers.map((m) => ({
+        id: m.id,
+        title: m.title,
+        url: m.url,
+        completed: m.completed,
+        skipped: m.skipped,
+      })),
+    })),
+  };
+};
+
+const buildTrainingSession = (
+  completedManeuvers,
+  levels,
+  maneuverCompletionEvents,
+) => {
+  const safeLevels = safeArray(levels);
+  const completed = completedManeuvers || {};
+  const events = sanitizeManeuverCompletionEvents(maneuverCompletionEvents || []);
+
+  // --- Helper: pick random subset ---
+  const pickRandom = (arr, count) => {
+    const shuffled = [...arr].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+  };
+
+  // --- 1. Find edge level (highest with partial completion) ---
+  let edgeLevel = null;
+  for (const level of safeLevels) {
+    const maneuvers = safeArray(level.maneuvers);
+    const hasSome = maneuvers.some((m) => completed[m.id]);
+    const hasAll = maneuvers.every((m) => completed[m.id]);
+    if (hasSome && !hasAll) {
+      edgeLevel = level;
+    }
+  }
+
+  // --- 2. Build maneuver pools ---
+  const level1 = safeLevels.find((l) => String(l.id) === "1") || safeLevels[0];
+  const level1Maneuvers = safeArray(level1?.maneuvers) || [];
+
+  // Warm-up: 2-3 most-recent completions (deduplicated)
+  const seenIds = new Set();
+  const recentCompletions = [];
+  for (const event of [...events].reverse()) {
+    if (!seenIds.has(event.maneuverId)) {
+      seenIds.add(event.maneuverId);
+      const level = safeLevels.find((l) => String(l.id) === String(event.levelId));
+      const maneuver = level?.maneuvers.find(
+        (m) => String(m.id) === String(event.maneuverId),
+      );
+      if (maneuver) {
+        recentCompletions.push(maneuver);
+      }
+    }
+    if (recentCompletions.length >= 3) break;
+  }
+
+  let warmupManeuvers = recentCompletions.slice(0, 3);
+  // Pad with level-1 if needed
+  if (warmupManeuvers.length < 2) {
+    const lvl1Undone = level1Maneuvers.filter((m) => !completed[m.id]);
+    const pad = pickRandom(
+      lvl1Undone.length > 0 ? lvl1Undone : level1Maneuvers,
+      2 - warmupManeuvers.length,
+    );
+    warmupManeuvers = [...warmupManeuvers, ...pad];
+  }
+
+  // New Skill: 1-2 uncompleted from edge level (or level-1 fallback)
+  let newSkillManeuvers = [];
+  if (edgeLevel) {
+    const undone = edgeLevel.maneuvers.filter((m) => !completed[m.id]);
+    newSkillManeuvers = pickRandom(undone, Math.min(undone.length, 2));
+  }
+  if (newSkillManeuvers.length === 0) {
+    const lvl1Undone = level1Maneuvers.filter((m) => !completed[m.id]);
+    newSkillManeuvers = pickRandom(
+      lvl1Undone.length > 0 ? lvl1Undone : level1Maneuvers,
+      Math.min(2, lvl1Undone.length > 0 ? lvl1Undone.length : 1),
+    );
+  }
+
+  // Cool-down: 1-2 from level-1
+  const cooldownManeuvers = pickRandom(level1Maneuvers, Math.min(2, level1Maneuvers.length));
+
+  const makeManeuverEntry = (m) => ({
+    id: m.id,
+    title: m.title,
+    url: m.url || "",
+    completed: false,
+    skipped: false,
+  });
+
+  return {
+    batteries: [
+      { label: "Warm-up", maneuvers: warmupManeuvers.map(makeManeuverEntry) },
+      { label: "New Skill", maneuvers: newSkillManeuvers.map(makeManeuverEntry) },
+      { label: "Cool-down", maneuvers: cooldownManeuvers.map(makeManeuverEntry) },
+    ],
+  };
+};
+
 export {
   STORAGE_KEYS,
+  buildTrainingSession,
   buildCrashRateBreakdown,
   buildHelicopterTotals,
   buildHelicopterMonthlyFlightSeries,
@@ -673,6 +815,7 @@ export {
   createCrashEvent,
   createFlightEvent,
   createManeuverCompletionEvent,
+  createSessionEvent,
   formatMonthYear,
   getCrashRate,
   getEventMonthRange,
@@ -684,5 +827,6 @@ export {
   sanitizeFlightEvents,
   sanitizeHelicopters,
   sanitizeManeuverCompletionEvents,
+  sanitizeSessionHistory,
   shiftMonth,
 };
