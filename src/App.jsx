@@ -416,7 +416,7 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  const handleCopyPrompt = async () => {
+  const buildCoachPrompt = () => {
     const allManeuvers = levels.flatMap((l) =>
       l.maneuvers.map(
         (m) =>
@@ -437,7 +437,7 @@ function App() {
 
     const allTips = tips.join("\n");
 
-    const prompt = `You are a helpful RC Helicopter Pilot Proficiency Coach.
+    return `You are a helpful RC Helicopter Pilot Proficiency Coach.
 
 Here are the maneuvers in the program:
 ${allManeuvers.join("\n")}
@@ -459,6 +459,37 @@ Assume that a flight battery lasts approx 5 minutes and that a typical training 
 You can ask the user if they would like a plan for more batteries in this session or if they are training on a simulator.  If on a simulator, they may be able to do more flights in one session.
 
 Do Not Include Current Progress Summary`;
+  };
+
+  const handlePromptAction = async (action) => {
+    const prompt = buildCoachPrompt();
+
+    if (action === "chatgpt") {
+      window.open(
+        `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      return;
+    }
+
+    if (action === "gemini") {
+      window.open(
+        `https://www.google.com/search?udm=50&aep=11&q=${encodeURIComponent(prompt)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      return;
+    }
+
+    if (action === "grok") {
+      window.open(
+        `https://x.com/i/grok?text=${encodeURIComponent(prompt)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      return;
+    }
 
     try {
       await navigator.clipboard.writeText(prompt);
@@ -681,7 +712,7 @@ Do Not Include Current Progress Summary`;
           <HomeView
             completedManeuvers={completedManeuvers}
             helicopters={helicopters}
-            handleCopyPrompt={handleCopyPrompt}
+            handlePromptAction={handlePromptAction}
             onLevels={() => {
               navigate("/levels");
               window.scrollTo(0, 0);
@@ -713,7 +744,7 @@ Do Not Include Current Progress Summary`;
           <LevelsView
             levels={levels}
             getLevelProgress={getLevelProgress}
-            handleCopyPrompt={handleCopyPrompt}
+            handlePromptAction={handlePromptAction}
             tips={tips}
             currentTipIndex={currentTipIndex}
             nextTip={nextTip}
