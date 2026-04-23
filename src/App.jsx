@@ -475,6 +475,7 @@ Do Not Include Current Progress Summary`;
     }
 
     if (action !== "copy") {
+      console.warn("Unknown prompt action requested", action);
       return;
     }
 
