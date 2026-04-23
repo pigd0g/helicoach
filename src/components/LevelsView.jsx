@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import Tips from "./Tips";
 import LevelCard from "./LevelCard";
 
@@ -12,7 +12,7 @@ export default function LevelsView({
   prevTip,
   handleLevelClick,
 }) {
-  const [promptAction, setPromptAction] = React.useState("");
+  const [promptAction, setPromptAction] = useState("");
 
   const onPromptActionChange = async (event) => {
     const action = event.target.value;

@@ -463,31 +463,18 @@ Do Not Include Current Progress Summary`;
 
   const handlePromptAction = async (action) => {
     const prompt = buildCoachPrompt();
+    const promptUrlByAction = {
+      chatgpt: `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`,
+      gemini: `https://www.google.com/search?udm=50&aep=11&q=${encodeURIComponent(prompt)}`,
+      grok: `https://x.com/i/grok?text=${encodeURIComponent(prompt)}`,
+    };
 
-    if (action === "chatgpt") {
-      window.open(
-        `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`,
-        "_blank",
-        "noopener,noreferrer",
-      );
+    if (promptUrlByAction[action]) {
+      window.open(promptUrlByAction[action], "_blank", "noopener,noreferrer");
       return;
     }
 
-    if (action === "gemini") {
-      window.open(
-        `https://www.google.com/search?udm=50&aep=11&q=${encodeURIComponent(prompt)}`,
-        "_blank",
-        "noopener,noreferrer",
-      );
-      return;
-    }
-
-    if (action === "grok") {
-      window.open(
-        `https://x.com/i/grok?text=${encodeURIComponent(prompt)}`,
-        "_blank",
-        "noopener,noreferrer",
-      );
+    if (action !== "copy") {
       return;
     }
 
